@@ -1,5 +1,7 @@
-# CI/CD: kiểm tra frontend + backend, rồi deploy bản demo (giao diện Next.js + API giả lập trong trình duyệt) lên Vercel.
-# - push main  → Production   · pull request → Preview
+# CI/CD: kiểm tra frontend + backend; CHỈ deploy khi có tag release.
+# - push main / pull request → chỉ chạy test (không deploy)
+# - push tag vX.Y.Z (tag phải nằm trên nhánh main) → test → deploy Production lên Vercel → tạo GitHub Release
+#   Phát hành:  git tag v1.2.0 && git push origin v1.2.0
 # - Vercel không chạy được Spring Boot + MySQL, nên deploy bản "offline-demo" (npm run build:offline) — static, không cần backend.
 # Cần cấu hình trên GitHub repo:
 #   secrets.VERCEL_TOKEN      — token tạo ở https://vercel.com/account/tokens (scope: team TVT POC)
@@ -10,12 +12,13 @@ name: CI/CD — Vercel
 on:
   push:
     branches: [main]
+    tags: ["v*.*.*"]
   pull_request:
   workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
 permissions:
   contents: read
@@ -61,19 +64,31 @@ jobs:
       - run: ./mvnw -B -ntp verify
 
   deploy:
-    name: Deploy → Vercel (${{ github.event_name == 'pull_request' && 'Preview' || 'Production' }})
+    name: Release ${{ github.ref_name }} → Vercel Production
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: [frontend, backend]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # tạo GitHub Release
     environment:
-      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
+      name: production
       url: ${{ steps.deploy.outputs.url }}
     env:
       VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ github.ref_name }}
     steps:
-      - name: Check config
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check tag nằm trên main + cấu hình
         run: |
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Tag $TAG không nằm trên nhánh main — chỉ phát hành từ main."; exit 1
+          fi
           missing=""
           [ -n "$VERCEL_TOKEN" ] || missing="$missing secrets.VERCEL_TOKEN"
           [ -n "$VERCEL_ORG_ID" ] || missing="$missing vars.VERCEL_ORG_ID"
@@ -87,7 +102,16 @@ jobs:
       - name: Deploy
         id: deploy
         run: |
-          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then target=""; else target="--prod"; fi
-          url=$(vercel deploy dist $target --yes --token "$VERCEL_TOKEN")
+          url=$(vercel deploy dist --prod --yes --token "$VERCEL_TOKEN" --meta release="$TAG")
           echo "url=$url" >> "$GITHUB_OUTPUT"
-          echo "### 🚀 Deployed: $url" >> "$GITHUB_STEP_SUMMARY"
+          echo "### 🚀 $TAG deployed: $url" >> "$GITHUB_STEP_SUMMARY"
+      - name: GitHub Release
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          notes="Production: https://tvt-poc-mini-booking-hotel.vercel.app (deployment: $URL)"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG đã có — bỏ qua tạo mới."
+          else
+            gh release create "$TAG" --title "$TAG" --generate-notes --notes "$notes" --verify-tag
+          fi

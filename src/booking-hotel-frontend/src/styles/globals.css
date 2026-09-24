@@ -36,6 +36,9 @@
   --shadow-card: 0 4px 6px rgba(15, 23, 42, 0.06);
   --shadow-pop: 0 10px 15px rgba(15, 23, 42, 0.1);
   --shadow-modal: 0 20px 25px rgba(0, 0, 0, 0.15);
+  /* F6: kính mờ (bóng màu ink) và ảnh nổi trên nền mờ (bóng navy đậm) */
+  --shadow-glass: 0 8px 24px rgba(30, 41, 59, 0.12);
+  --shadow-float: 0 12px 30px rgba(23, 37, 84, 0.28);
 }
 
 @layer base {
@@ -84,6 +87,12 @@
   img {
     max-width: 100%;
   }
+  /* Trang có thanh CTA dính đáy (mobile) → chừa chỗ cuối trang để thanh không che nội dung/footer */
+  @media (width < 64rem) {
+    body:has([data-sticky-cta]) {
+      padding-bottom: 5.5rem;
+    }
+  }
 }
 
 @layer components {
@@ -94,11 +103,39 @@
       radial-gradient(60% 80% at 5% 90%, rgba(59, 130, 246, 0.25), transparent 60%),
       linear-gradient(135deg, #172554 0%, #1e3a8a 55%, #1e40af 100%);
   }
-  /* "Liquid glass" nhẹ: nền trắng gần đặc để giữ tương phản chữ. */
+  /* Chỉ viết backdrop-filter không tiền tố: Lightning CSS tự thêm -webkit- cho Safari (viết cả hai thì bản không tiền tố bị gộp mất). */
+  /* F6 — thẻ kính mờ đặt trên ảnh/nền mờ: trắng 72% + blur 16px, viền trắng, bóng nhẹ màu ink, bo 16px. */
   .glass {
-    background-color: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-glass);
+    border-radius: 16px;
+  }
+  /* Badge dạng pill kính (hạng sao, điểm đánh giá trên nền mờ). */
+  .glass-pill {
+    background-color: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 9999px;
+  }
+}
+
+/* Người dùng giảm hiệu ứng trong suốt → bỏ ảnh mờ và kính, dùng nền đặc. */
+@media (prefers-reduced-transparency: reduce) {
+  .photo-backdrop img {
+    display: none;
+  }
+  .photo-backdrop > div {
+    background: var(--color-bg);
+  }
+  .photo-backdrop[data-tone="card"] > div {
+    background: var(--color-card);
+  }
+  .glass,
+  .glass-pill {
+    background-color: #ffffff;
+    backdrop-filter: none;
   }
 }
 
@@ -107,6 +144,18 @@
     opacity: 0;
   }
   to {
+    opacity: 1;
+  }
+}
+
+/* Bottom sheet trượt lên (≤ 200ms; tắt khi prefers-reduced-motion) */
+@keyframes sheet-up {
+  from {
+    transform: translateY(24px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
     opacity: 1;
   }
 }

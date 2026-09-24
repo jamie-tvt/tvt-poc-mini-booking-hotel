@@ -39,6 +39,21 @@ public class DemoDataSeeder implements CommandLineRunner {
     public static final String GUEST_CODE = "HB-GUEST1";
     public static final String GUEST_KEY = "demo-guest-key-000000001";
 
+    /**
+     * Ảnh bìa khách sạn: link CDN Unsplash (Unsplash License), ≤ 255 ký tự cho cột VARCHAR(255).
+     * Mất mạng → frontend tự đổi sang SVG dự phòng trong public/images.
+     */
+    static final Map<String, String> COVER_IMAGES = Map.of(
+            "ninh-kieu-riverside", unsplash("photo-1683617638309-b1fc59c8c7b3"), // Tan Dao
+            "cai-rang-homestay", unsplash("photo-1778123178296-fdd5cb2424b5"), // Ahmet Yüksek
+            "vi-thanh-green", unsplash("photo-1619676289827-3b6eefa7ff93"), // Hà Nguyễn
+            "sunset-bay", unsplash("photo-1783162919371-8d7e9fa65f58"), // Wolfgang Unger
+            "mekong-lotus", unsplash("photo-1784007686796-bcaaf1044000")); // Jamie Trinh
+
+    static String unsplash(String photoId) {
+        return "https://images.unsplash.com/" + photoId + "?auto=format&fit=crop&w=1200&q=75";
+    }
+
     private final JpaUserRepository users;
     private final JpaUserRoleRepository roles;
     private final JpaFacilityCategoryRepository categories;
@@ -195,7 +210,7 @@ public class DemoDataSeeder implements CommandLineRunner {
 
     private Hotel hotel(User owner, String name, String city, String address, int stars, String phone, String slug, String desc, HotelStatus status) {
         Hotel h = new Hotel(owner.getId(), now);
-        String cover = "/images/hotels/" + slug + ".svg";
+        String cover = COVER_IMAGES.getOrDefault(slug, "/images/hotels/" + slug + ".svg");
         h.updateProfile(name, city, address, desc, stars, phone, "14:00", "12:00", cover, now);
         if (status != HotelStatus.PENDING_APPROVAL) h.changeStatus(status, now);
         h = hotels.save(h);

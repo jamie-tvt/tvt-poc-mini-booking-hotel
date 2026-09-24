@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BedDouble, MapPin } from "lucide-react";
 import { HotelImage } from "@/components/shared/HotelImage";
+import { PhotoBackdrop } from "@/components/shared/PhotoBackdrop";
 import { HotelClass, ReviewScore } from "@/components/ui/HotelClass";
 import { cn } from "@/lib/utils/cn";
 import { formatVnd } from "@/lib/utils/format";
@@ -14,9 +15,11 @@ export function hotelHref(id: number, stay: HotelSearchParams = {}): string {
 
 export function HotelCard({ hotel, stay, priority }: { hotel: HotelSummaryDto; stay?: HotelSearchParams; priority?: boolean }) {
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-line bg-card shadow-card transition-shadow duration-200 hover:shadow-pop focus-within:shadow-pop">
-      <HotelImage src={hotel.coverImageUrl} alt="" priority={priority} />
-      <div className="flex flex-1 flex-col gap-2 p-4">
+    <article className="group relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-card shadow-card transition-shadow duration-200 hover:shadow-pop focus-within:shadow-pop">
+      {/* Nền mờ theo ảnh của chính thẻ (F6); ảnh + nội dung là flex item có z-[1] nằm trên nền, link phủ cả thẻ vẫn tính theo article */}
+      <PhotoBackdrop src={hotel.coverImageUrl} tone="card" />
+      <HotelImage src={hotel.coverImageUrl} alt="" priority={priority} width={800} className="z-[1]" />
+      <div className="z-[1] flex flex-1 flex-col gap-2 p-4">
         <HotelClass stars={hotel.starRating} />
         <h3 className="text-lg font-bold leading-snug">
           <Link
@@ -39,7 +42,7 @@ export function HotelCard({ hotel, stay, priority }: { hotel: HotelSummaryDto; s
             {hotel.availableRoomTypes} loại phòng còn trống
           </p>
         )}
-        <div className="mt-auto flex flex-wrap items-end justify-between gap-2 border-t border-line pt-3">
+        <div className="mt-auto flex flex-wrap items-end justify-between gap-2 border-t border-ink/10 pt-3">
           <ReviewScore value={hotel.ratingAverage} count={hotel.ratingCount} />
           {hotel.fromPrice ? (
             <p className="text-right">

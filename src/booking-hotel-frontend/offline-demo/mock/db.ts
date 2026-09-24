@@ -46,7 +46,7 @@ export interface Setting { key: string; value: string; description: string }
 export interface Token { token: string; userId: number; family: string; revoked: boolean }
 
 export interface DB {
-  version: 1;
+  version: 2; // 2: ảnh Unsplash (F4) — dữ liệu cũ trong localStorage được seed lại
   seededAt: number;
   offsetMinutes: number;
   seq: Record<string, number>;
@@ -103,7 +103,7 @@ export const peekNight = (db: DB, roomTypeId: number, date: string): Night | und
 
 export function seed(now = Date.now()): DB {
   const db: DB = {
-    version: 1, seededAt: now, offsetMinutes: 0, seq: {},
+    version: 2, seededAt: now, offsetMinutes: 0, seq: {},
     users: [], facilityCategories: [], facilities: [], hotels: [], roomTypes: [], rooms: [], inventory: {}, bookings: [], invoices: [],
     payments: [], payouts: [], reviews: [], notifications: [], audit: [], tokens: [],
     settings: [
@@ -133,9 +133,17 @@ export function seed(now = Date.now()): DB {
     for (const [key, name, icon] of items) fac[key] = insert<Facility>(db, "facilities", { categoryId: c.id, name, icon }).id;
   }
 
+  // Ảnh bìa: link CDN Unsplash (Unsplash License) — giống DemoDataSeeder.java; mất mạng → HotelImage dùng SVG dự phòng
+  const covers: Record<string, string> = {
+    "ninh-kieu-riverside": "https://images.unsplash.com/photo-1683617638309-b1fc59c8c7b3?auto=format&fit=crop&w=1200&q=75", // Tan Dao
+    "cai-rang-homestay": "https://images.unsplash.com/photo-1778123178296-fdd5cb2424b5?auto=format&fit=crop&w=1200&q=75", // Ahmet Yüksek
+    "vi-thanh-green": "https://images.unsplash.com/photo-1619676289827-3b6eefa7ff93?auto=format&fit=crop&w=1200&q=75", // Hà Nguyễn
+    "sunset-bay": "https://images.unsplash.com/photo-1783162919371-8d7e9fa65f58?auto=format&fit=crop&w=1200&q=75", // Wolfgang Unger
+    "mekong-lotus": "https://images.unsplash.com/photo-1784007686796-bcaaf1044000?auto=format&fit=crop&w=1200&q=75", // Jamie Trinh
+  };
   const hotel = (owner: User, name: string, city: string, address: string, stars: number, phone: string, slug: string, desc: string,
     status: HotelStatus) => {
-    const cover = `/images/hotels/${slug}.svg`;
+    const cover = covers[slug] ?? `/images/hotels/${slug}.svg`;
     return insert<Hotel>(db, "hotels", {
       ownerId: owner.id, name, city, address, description: desc, starRating: stars, phone, checkInTime: "14:00", checkOutTime: "12:00",
       coverImageUrl: cover, images: [cover], status, createdAt: now - 60 * DAY, updatedAt: now - 60 * DAY,
@@ -265,7 +273,7 @@ export function load(): DB {
     const raw = window.localStorage.getItem(DB_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as DB;
-      if (parsed?.version === 1) return (memory = parsed);
+      if (parsed?.version === 2) return (memory = parsed);
     }
   } catch {
     /* localStorage bị chặn / dữ liệu hỏng → seed lại */

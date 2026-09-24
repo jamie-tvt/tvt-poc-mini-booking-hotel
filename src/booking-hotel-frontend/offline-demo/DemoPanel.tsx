@@ -1,4 +1,4 @@
-/** Bảng "DEMO · hướng dẫn" góc dưới trái: đổi vai trò 1 chạm, tra cứu đơn khách vãng lai, kịch bản demo, đặt lại dữ liệu. */
+/** Bảng "DEMO · hướng dẫn" góc dưới trái (mobile: nút tròn chỉ icon): đổi vai trò 1 chạm, tra cứu đơn khách vãng lai, kịch bản demo, đặt lại dữ liệu. */
 import { useEffect, useRef, useState } from "react";
 import { FlaskConical, RotateCcw, SearchCheck, X } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -100,7 +100,8 @@ export function DemoPanel() {
   const accounts = DEMO_ACCOUNTS.filter((a) => a.name || NAMES[a.email]);
 
   return (
-    <div ref={ref} className="fixed bottom-3 left-3 z-[60] font-sans text-sm text-ink print:hidden">
+    // Mobile: nút tròn 44px nằm trên thanh CTA dính đáy (bottom-24); ≥ sm: nút chữ ở góc dưới trái như cũ
+    <div ref={ref} className="fixed bottom-24 left-3 z-[60] font-sans text-sm text-ink print:hidden sm:bottom-3">
       {open && (
         <div
           role="dialog"
@@ -189,9 +190,11 @@ export function DemoPanel() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="inline-flex items-center gap-1.5 rounded-full bg-cta px-3.5 py-2 font-semibold text-white shadow-pop hover:bg-cta-hover"
+        className="inline-flex size-11 items-center justify-center gap-1.5 rounded-full bg-cta font-semibold text-white shadow-pop hover:bg-cta-hover sm:size-auto sm:px-3.5 sm:py-2"
       >
-        <FlaskConical className="size-4" aria-hidden="true" /> DEMO · hướng dẫn
+        <FlaskConical className="size-5 sm:size-4" aria-hidden="true" />
+        <span className="sr-only sm:hidden">Mở hướng dẫn demo</span>
+        <span className="hidden sm:inline">DEMO · hướng dẫn</span>
       </button>
     </div>
   );

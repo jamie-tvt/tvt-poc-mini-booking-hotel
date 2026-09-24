@@ -2,7 +2,7 @@
 id: decisions
 status: approved
 owner: mentor-team
-last_updated: 2026-09-23
+last_updated: 2026-09-24
 dependencies: [constraints]
 tags: [governance, adr, gate]
 ---
@@ -23,3 +23,7 @@ tags: [governance, adr, gate]
 | D10 | 23/09/2026 | Font Playfair Display + Be Vietnam Pro thay Playfair Display SC + Karla của MASTER.md | Hai font gốc thiếu dấu tiếng Việt | Mentor |
 | D11 | 23/09/2026 | Khách vãng lai truy cập đơn bằng mã đơn + access key; tra cứu lại bằng mã + email | BR-BK-01 guest checkout; POC lưu key thô, production nên lưu hash và gửi link qua email | Mentor |
 | D12 | 23/09/2026 | Cổng Hotel khác Tour (web 3100, API 8180, MySQL 3308) | Chạy song song hai demo trên một máy | Mentor |
+| D13 | 24/09/2026 | Ảnh khách sạn/loại phòng/điểm đến/hero dùng link CDN Unsplash (`images.unsplash.com/<photo-id>?auto=format&fit=crop&w=1200&q=75`, ≤ 255 ký tự); đổi kích thước qua `unsplashVariant()`; SVG cũ trong `public/images` giữ làm ảnh dự phòng khi mất mạng; tác giả ghi cạnh URL (Unsplash License) | SVG minh hoạ không giống sản phẩm thật (BUG_REPORT F4) | User (mentor lead) |
+| D14 | 24/09/2026 | Thiết kế "nền mờ theo ảnh" (F6): `PhotoBackdrop` (ảnh w=64 blur + phủ màu nền), thẻ kính `.glass`, hero ảnh thật; giữ nguyên màu/font thương hiệu; khu quản trị không đổi | Phản hồi mentor, dùng ui-ux-pro-max; mockup đã duyệt | User (mentor lead) |
+| D15 | 24/09/2026 | Mobile (< lg) `/hotels`: thanh gọn (tóm tắt thành phố · ngày · khách + "Bộ lọc (n)" + "Sắp xếp" + chip ✕) mở bottom sheet chứa đủ bộ lọc; desktop giữ cột lọc. Logic lọc không đổi (không có lỗi lọc) | Form lọc cũ cao ~2,4 màn hình trên điện thoại | User (mentor lead) |
+| D16 | 24/09/2026 | Deploy chỉ khi đẩy tag release `v*.*.*` (tag đầu `v1.1.0`); push/PR chỉ chạy test. Workflow do người điều phối sửa | Tránh deploy Production ở mọi commit (F5) | User (mentor lead) |

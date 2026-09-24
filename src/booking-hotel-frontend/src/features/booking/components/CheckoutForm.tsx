@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BedDouble, CalendarDays, CircleCheck, CircleX, LockKeyhole, MapPin, Users } from "lucide-react";
 import { HotelImage } from "@/components/shared/HotelImage";
+import { PhotoBackdrop } from "@/components/shared/PhotoBackdrop";
 import { roomImageFor } from "@/lib/utils/images";
 import { Alert } from "@/components/ui/Alert";
 import { Button, LinkButton } from "@/components/ui/Button";
@@ -183,71 +184,75 @@ export function CheckoutForm({
       </div>
 
       <div className="flex flex-col gap-4 lg:sticky lg:top-20">
-        <Card className="flex flex-col gap-4">
-          <div className="flex gap-3">
-            <div className="w-28 shrink-0 overflow-hidden rounded-lg">
-              <HotelImage src={roomImageFor(room.name, room.imageUrl)} alt="" fallback="/images/rooms/standard.svg" />
+        {/* Thẻ tóm tắt đơn: nền mờ theo ảnh khách sạn (F6) */}
+        <Card className="relative isolate overflow-hidden rounded-2xl">
+          <PhotoBackdrop src={hotel.coverImageUrl} tone="card" />
+          <div className="relative flex flex-col gap-4">
+            <div className="flex gap-3">
+              <div className="w-28 shrink-0 self-start overflow-hidden rounded-lg shadow-card">
+                <HotelImage src={roomImageFor(room.name, room.imageUrl)} alt="" fallback="/images/rooms/standard.svg" />
+              </div>
+              <div className="min-w-0">
+                <p className="font-heading text-lg font-bold text-ink-strong">{hotel.name}</p>
+                <p className="flex items-start gap-1 text-sm text-ink-soft">
+                  <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden="true" /> {hotel.city}
+                </p>
+                <p className="mt-1 flex items-center gap-1 text-sm font-semibold text-ink">
+                  <BedDouble className="size-4 text-brand" aria-hidden="true" /> {room.name}
+                </p>
+              </div>
             </div>
-            <div className="min-w-0">
-              <p className="font-heading text-lg font-bold text-ink-strong">{hotel.name}</p>
-              <p className="flex items-start gap-1 text-sm text-ink-soft">
-                <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden="true" /> {hotel.city}
-              </p>
-              <p className="mt-1 flex items-center gap-1 text-sm font-semibold text-ink">
-                <BedDouble className="size-4 text-brand" aria-hidden="true" /> {room.name}
-              </p>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 border-t border-ink/10 pt-3 text-sm">
+              <dt className="flex items-center gap-1.5 text-ink-soft">
+                <CalendarDays className="size-4" aria-hidden="true" /> Nhận phòng
+              </dt>
+              <dd className="text-right">
+                {formatStayDateWithWeekday(stay.checkIn)} <span className="text-ink-soft">từ {hotel.checkInTime}</span>
+              </dd>
+              <dt className="flex items-center gap-1.5 text-ink-soft">
+                <CalendarDays className="size-4" aria-hidden="true" /> Trả phòng
+              </dt>
+              <dd className="text-right">
+                {formatStayDateWithWeekday(stay.checkOut)} <span className="text-ink-soft">trước {hotel.checkOutTime}</span>
+              </dd>
+              <dt className="flex items-center gap-1.5 text-ink-soft">
+                <Users className="size-4" aria-hidden="true" /> Khách, phòng
+              </dt>
+              <dd className="text-right">
+                {stay.guests} khách · {stay.rooms} phòng · {formatNights(nights)}
+              </dd>
+            </dl>
+            <div className="border-t border-ink/10 pt-3">
+              <PriceSummary breakdown={price} rooms={stay.rooms} />
             </div>
-          </div>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 border-t border-line pt-3 text-sm">
-            <dt className="flex items-center gap-1.5 text-ink-soft">
-              <CalendarDays className="size-4" aria-hidden="true" /> Nhận phòng
-            </dt>
-            <dd className="text-right">
-              {formatStayDateWithWeekday(stay.checkIn)} <span className="text-ink-soft">từ {hotel.checkInTime}</span>
-            </dd>
-            <dt className="flex items-center gap-1.5 text-ink-soft">
-              <CalendarDays className="size-4" aria-hidden="true" /> Trả phòng
-            </dt>
-            <dd className="text-right">
-              {formatStayDateWithWeekday(stay.checkOut)} <span className="text-ink-soft">trước {hotel.checkOutTime}</span>
-            </dd>
-            <dt className="flex items-center gap-1.5 text-ink-soft">
-              <Users className="size-4" aria-hidden="true" /> Khách, phòng
-            </dt>
-            <dd className="text-right">
-              {stay.guests} khách · {stay.rooms} phòng · {formatNights(nights)}
-            </dd>
-          </dl>
-          <div className="border-t border-line pt-3">
-            <PriceSummary breakdown={price} rooms={stay.rooms} />
-          </div>
 
-          {stayError && <Alert tone="error">{stayError}</Alert>}
-          {apiError && (
-            <Alert
-              tone="error"
-              title={unavailable ? "Loại phòng này vừa hết trong khoảng ngày bạn chọn" : "Chưa giữ được phòng"}
-              action={
-                unavailable ? (
-                  <LinkButton href={backToRooms} size="sm" variant="secondary">
-                    Chọn phòng khác
-                  </LinkButton>
-                ) : undefined
-              }
-            >
-              {apiError.message}
-            </Alert>
-          )}
+            {stayError && <Alert tone="error">{stayError}</Alert>}
+            {apiError && (
+              <Alert
+                tone="error"
+                title={unavailable ? "Loại phòng này vừa hết trong khoảng ngày bạn chọn" : "Chưa giữ được phòng"}
+                action={
+                  unavailable ? (
+                    <LinkButton href={backToRooms} size="sm" variant="secondary">
+                      Chọn phòng khác
+                    </LinkButton>
+                  ) : undefined
+                }
+              >
+                {apiError.message}
+              </Alert>
+            )}
 
-          <Button type="submit" variant="cta" size="lg" loading={pending} disabled={unavailable}>
-            <LockKeyhole className="size-5" aria-hidden="true" /> Giữ phòng và thanh toán
-          </Button>
-          <p className="text-center text-xs text-ink-soft">
-            Phòng được giữ trong thời gian ngắn (mặc định 15 phút) để bạn thanh toán. Bạn chưa bị trừ tiền ở bước này.
-          </p>
-          <LinkButton href={backToRooms} variant="ghost" size="sm">
-            Quay lại chọn phòng
-          </LinkButton>
+            <Button type="submit" variant="cta" size="lg" loading={pending} disabled={unavailable}>
+              <LockKeyhole className="size-5" aria-hidden="true" /> Giữ phòng và thanh toán
+            </Button>
+            <p className="text-center text-xs text-ink-soft">
+              Phòng được giữ trong thời gian ngắn (mặc định 15 phút) để bạn thanh toán. Bạn chưa bị trừ tiền ở bước này.
+            </p>
+            <LinkButton href={backToRooms} variant="ghost" size="sm">
+              Quay lại chọn phòng
+            </LinkButton>
+          </div>
         </Card>
       </div>
     </form>

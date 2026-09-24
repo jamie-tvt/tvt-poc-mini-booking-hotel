@@ -13,7 +13,8 @@ function watchErrors(page: Page) {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("console", (m) => {
-    if (m.type() === "error" && !/fonts\.(googleapis|gstatic)/.test(m.text())) errors.push(m.text());
+    // Font Google / ảnh Unsplash (CDN) không tải được khi mất mạng → giao diện tự dùng font hệ thống / SVG dự phòng
+    if (m.type() === "error" && !/fonts\.(googleapis|gstatic)/.test(m.text()) && !/images\.unsplash\.com/.test(m.location().url)) errors.push(m.text());
   });
   return errors;
 }
@@ -35,7 +36,7 @@ test.beforeEach(async ({ page }) => {
   await page.reload();
 });
 
-test("trang công khai: tìm theo ngày, chi tiết khách sạn, ảnh nhúng offline", async ({ page }) => {
+test("trang công khai: tìm theo ngày, chi tiết khách sạn, ảnh Unsplash (dự phòng SVG nhúng)", async ({ page }) => {
   const errors = watchErrors(page);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await go(page, `/hotels?city=${encodeURIComponent("Cần Thơ")}&checkIn=${vnDate(3)}&checkOut=${vnDate(5)}&guests=2&rooms=1`);
@@ -46,11 +47,58 @@ test("trang công khai: tìm theo ngày, chi tiết khách sạn, ảnh nhúng o
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Ninh Kiều");
   await expect(page.getByText(/Deluxe hướng sông/).first()).toBeVisible();
   await expect(page.getByText(/Thang máy giờ cao điểm/)).toBeVisible(); // đánh giá có sẵn
-  const img = page.locator("main img").first();
+  const img = page.getByRole("img", { name: /^Ảnh Ninh Kiều Riverside/ }).first();
   await expect(img).toHaveJSProperty("complete", true);
   expect(await img.evaluate((i: HTMLImageElement) => i.naturalWidth)).toBeGreaterThan(0);
-  expect(await img.getAttribute("src")).toMatch(/^data:image\/svg/);
+  // Có mạng: ảnh CDN Unsplash bản 1200px; mất mạng: SVG dự phòng nhúng trong file
+  expect(await img.getAttribute("src")).toMatch(/^(https:\/\/images\.unsplash\.com\/photo-.*w=1200|data:image\/svg)/);
   expect(errors).toEqual([]);
+});
+
+test("mất mạng (chặn Unsplash): ảnh khách sạn/phòng tự đổi sang SVG dự phòng nhúng offline", async ({ page }) => {
+  await page.route("https://images.unsplash.com/**", (r) => r.abort());
+  await go(page, `/hotels/1?checkIn=${vnDate(3)}&checkOut=${vnDate(5)}&guests=2&rooms=1`);
+  const cover = page.getByRole("img", { name: /^Ảnh Ninh Kiều Riverside/ }).first();
+  await expect(cover).toHaveAttribute("src", /^data:image\/svg/);
+  await expect(cover).toHaveJSProperty("complete", true);
+  expect(await cover.evaluate((i: HTMLImageElement) => i.naturalWidth)).toBeGreaterThan(0);
+  const room = page.locator("#rooms article img").first();
+  await room.scrollIntoViewIfNeeded();
+  await expect(room).toHaveAttribute("src", /^data:image\/svg/);
+});
+
+test("mobile: kết quả hiện ngay màn đầu; Bộ lọc mở bottom sheet, Áp dụng, bỏ điều kiện bằng chip", async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true });
+  const page = await ctx.newPage();
+  const errors = watchErrors(page);
+  await go(page, "/");
+  await page.evaluate(() => localStorage.setItem("hb.demo.panel-seen", "1"));
+  await go(page, `/hotels?city=${encodeURIComponent("Cần Thơ")}`);
+  const firstCard = page.getByRole("link", { name: /Ninh Kiều Riverside/ }).first();
+  await expect(firstCard).toBeVisible();
+  expect((await page.locator("main article").first().boundingBox())!.y).toBeLessThan(812); // không phải cuộn mới thấy kết quả
+
+  const openBtn = page.getByRole("button", { name: "Bộ lọc (1)" });
+  await openBtn.click();
+  const sheet = page.getByRole("dialog", { name: "Bộ lọc" });
+  await expect(sheet).toBeVisible();
+  await expect(sheet).toHaveAttribute("aria-modal", "true");
+  await page.keyboard.press("Escape");
+  await expect(sheet).toBeHidden();
+  await expect(openBtn).toBeFocused();
+
+  await openBtn.click();
+  await sheet.getByText("4 sao", { exact: true }).click();
+  await sheet.getByRole("button", { name: "Áp dụng" }).click();
+  await expect(sheet).toBeHidden();
+  await expect(page).toHaveURL(/stars=4/);
+  await expect(page.getByRole("button", { name: "Bộ lọc (2)" })).toBeVisible();
+  await expect(page.getByText(/Cái Răng Homestay/)).toHaveCount(0); // homestay 3 sao bị lọc
+  await page.getByRole("button", { name: "Bỏ lọc 4 sao" }).click();
+  await expect(page).not.toHaveURL(/stars=/);
+  await expect(page.getByText(/Cái Răng Homestay/).first()).toBeVisible();
+  expect(errors).toEqual([]);
+  await ctx.close();
 });
 
 test("E2E-01: khách vãng lai đặt, thanh toán → lễ tân nhận/trả phòng → khách đánh giá", async ({ page }) => {

@@ -123,7 +123,7 @@ export function BookingDetailView({ code, accessKey, paid, isNew }: { code: stri
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[3fr_2fr]">
         <div className="flex flex-col gap-6">
-          <BookingSummaryCard booking={booking} />
+          <BookingSummaryCard booking={booking} backdrop />
 
           {booking.status === "CANCELLED" && (
             <Alert tone="warning" title="Đơn đã huỷ">

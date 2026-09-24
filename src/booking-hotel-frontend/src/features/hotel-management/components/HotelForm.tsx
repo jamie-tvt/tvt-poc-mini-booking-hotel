@@ -7,17 +7,19 @@ import { Button } from "@/components/ui/Button";
 import { SelectField, TextAreaField, TextField } from "@/components/ui/Field";
 import { useMutation } from "@/lib/api/hooks";
 import { cn } from "@/lib/utils/cn";
+import { HOTEL_IMAGES, unsplashVariant } from "@/lib/utils/images";
 import { zodFieldErrors } from "@/lib/utils/validation";
 import type { PortalHotelDto } from "@/types/domain";
 import type { HotelPayload } from "../services/portalHotelService";
 import { hotelSchema } from "../validators/hotelSchemas";
 
+/** Ảnh bìa gợi ý = ảnh Unsplash của dữ liệu mẫu (cùng URL với seed để ô đang chọn khớp khi sửa khách sạn mẫu). */
 export const COVER_PRESETS = [
-  { url: "/images/hotels/ninh-kieu-riverside.svg", label: "Bến sông" },
-  { url: "/images/hotels/cai-rang-homestay.svg", label: "Homestay miệt vườn" },
-  { url: "/images/hotels/vi-thanh-green.svg", label: "Khách sạn xanh" },
-  { url: "/images/hotels/sunset-bay.svg", label: "Biển hoàng hôn" },
-  { url: "/images/hotels/mekong-lotus.svg", label: "Hồ sen" },
+  { url: HOTEL_IMAGES.ninhKieu, label: "Bến sông" },
+  { url: HOTEL_IMAGES.caiRang, label: "Homestay miệt vườn" },
+  { url: HOTEL_IMAGES.viThanh, label: "Khách sạn xanh" },
+  { url: HOTEL_IMAGES.sunsetBay, label: "Biển hoàng hôn" },
+  { url: HOTEL_IMAGES.mekongLotus, label: "Hồ sen" },
 ];
 
 type FormState = Record<"name" | "city" | "address" | "description" | "starRating" | "phone" | "checkInTime" | "checkOutTime" | "coverImageUrl", string>;
@@ -112,7 +114,7 @@ export function HotelForm({
               >
                 <input id={id} type="radio" name="cover" className="sr-only" checked={checked} onChange={() => setF((s) => ({ ...s, coverImageUrl: p.url }))} />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.url} alt="" width={160} height={100} className="aspect-[16/10] w-full rounded object-cover" />
+                <img src={unsplashVariant(p.url, 320)} alt="" width={160} height={100} className="aspect-[16/10] w-full rounded object-cover" />
                 {p.label}
               </label>
             );
