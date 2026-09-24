@@ -7,7 +7,20 @@ dependencies: [qa.test-plan]
 tags: [qa, test-results]
 ---
 
-# Kết quả test — cập nhật 24/09/2026 (v1.1.0)
+# Kết quả test — cập nhật 24/09/2026 (v1.2.0)
+
+## v1.2.0 — catalog 200 chỗ nghỉ miền Tây
+
+| Bộ test | Số test | Kết quả |
+|---|---|---|
+| Backend `./mvnw verify` (unit + IT Testcontainers, thêm `MekongCatalogTest` 4) | 74 | Pass |
+| Frontend Vitest (thêm `offline-demo/mock/catalog.test.ts` 4) | 108 | Pass; `tsc --noEmit` sạch |
+| E2E demo offline (test duyệt khách sạn chọn tab "Chờ duyệt" vì danh sách admin nay 205 dòng) | 11 | Pass |
+| Seeder trên MySQL 8 trống (CAT-05) | — | 205 khách sạn, 532 loại phòng, 1.733 phòng; `/cities` 13 tỉnh; tìm Bến Tre 20, Cà Mau 12; giá niêm yết đúng BR-PR-01 (360.000 → 396.000) |
+| Link ảnh Unsplash dùng trong catalog | 269 | HTTP 200 |
+| Soát giao diện trang chủ (13 điểm đến có ảnh), chi tiết chỗ nghỉ mới | — | Không vỡ layout |
+
+## v1.1.0
 
 | Bộ test | Số test | Kết quả |
 |---|---|---|

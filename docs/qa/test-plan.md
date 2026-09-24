@@ -2,7 +2,7 @@
 id: qa.test-plan
 status: approved
 owner: mentor-team
-last_updated: 2026-09-23
+last_updated: 2026-09-24
 dependencies: [technical.api-contracts, technical.state-machine]
 tags: [qa, test-plan, gate-2]
 ---
@@ -26,3 +26,15 @@ Công cụ và lệnh như POC Tour: `./mvnw test` (JUnit + Testcontainers MySQL
 | E2E-03 | Khách vào `/portal/front-desk` | E2E | Báo không có quyền |
 
 Checklist UI (MASTER.md): không emoji làm icon, cursor-pointer, tương phản ≥ 4.5:1, focus nhìn thấy, reduced-motion, responsive 375–1440 không tràn ngang.
+
+## v1.2.0 — Catalog 200 chỗ nghỉ miền Tây (GATE 2 đã duyệt 24/09/2026)
+| Mã | Kịch bản | Tầng | Kỳ vọng |
+|---|---|---|---|
+| CAT-01 | `MekongCatalogTest`: 200 chỗ nghỉ, tên không trùng, đủ 13 tỉnh, trạng thái ACTIVE/PENDING_APPROVAL | Unit BE | Pass |
+| CAT-02 | Giá trị vừa cột DB và quy tắc domain (sức chứa 1–20, giá > 0, ngày huỷ 0–60, số phòng không trùng trong 1 khách sạn), khoá tiện nghi hợp lệ | Unit BE | Pass |
+| CAT-03 | Chủ cơ sở `chunhaNN@example.com` là tài khoản mới; ảnh bìa/gallery/loại phòng là link CDN Unsplash có ghi công | Unit BE | Pass |
+| CAT-04 | `offline-demo/mock/catalog.test.ts`: seed demo có 205 khách sạn, owner@example.com vẫn chỉ 3 khách sạn, tiện nghi dân dã không nhân đôi | Unit FE | Pass |
+| CAT-05 | Chạy stack Docker với DB trống → seeder tạo đủ khách sạn/loại phòng/phòng; tìm theo tỉnh Bến Tre, Cà Mau có kết quả và giá niêm yết đúng BR-PR-01 | Thủ công + API | Seeder không lỗi |
+| CAT-06 | Toàn bộ test cũ (unit/IT Testcontainers/E2E offline) chạy lại | Hồi quy | Pass; E2E phụ thuộc danh sách thì cập nhật |
+| CAT-07 | Bản offline: trang chủ (13 điểm đến có ảnh), danh sách lọc tỉnh, chi tiết homestay/resort mới, đặt phòng ở chỗ nghỉ mới — desktop + mobile | UI | Không vỡ layout, không ảnh lỗi |
+| CAT-08 | Tag `v1.2.0` → GitHub Actions xanh → Vercel production có dữ liệu mới | CI/CD | Deploy thành công |

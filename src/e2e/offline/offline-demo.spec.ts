@@ -172,6 +172,8 @@ test("admin duyệt khách sạn chờ duyệt → hiện ở trang tìm kiếm;
   const errors = watchErrors(page);
   await login(page, "admin@example.com");
   await go(page, "/admin/hotels");
+  // 205 khách sạn (có catalog miền Tây) → lọc tab Chờ duyệt như admin thật
+  await page.getByRole("tab", { name: "Chờ duyệt" }).click();
   await page.getByRole("button", { name: "Duyệt Mekong Lotus Hotel" }).click();
   await page.getByRole("dialog").getByRole("button", { name: "Duyệt", exact: true }).click();
   await expect(page.getByText(/Đã duyệt/).first()).toBeVisible();

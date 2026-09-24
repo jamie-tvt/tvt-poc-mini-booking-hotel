@@ -1,10 +1,12 @@
 /**
  * "Cơ sở dữ liệu" của API giả lập: 1 object JSON lưu ở localStorage.
  * Seed bám DemoDataSeeder.java của backend (cùng tài khoản, khách sạn, loại phòng, tồn kho, đơn mẫu, sinh theo "hôm nay" giờ VN).
+ * 200 chỗ nghỉ miền Tây đọc CHÍNH file catalog của backend (sinh bởi src/seed-catalog/generate.mjs).
  */
 import type {
   BookingStatus, CancellationPolicy, HotelStatus, PaymentProvider, PaymentStatus, PayoutStatus, ReviewStatus, Role,
 } from "@/types/domain";
+import catalog from "../../../booking-hotel-backend/src/main/resources/seed/mekong-catalog.json";
 
 export const DB_KEY = "hb.demo.db.v1";
 export const GUEST_CODE = "HB-GUEST1";
@@ -46,7 +48,7 @@ export interface Setting { key: string; value: string; description: string }
 export interface Token { token: string; userId: number; family: string; revoked: boolean }
 
 export interface DB {
-  version: 2; // 2: ảnh Unsplash (F4) — dữ liệu cũ trong localStorage được seed lại
+  version: 3; // 2: ảnh Unsplash (F4) · 3: thêm 200 chỗ nghỉ miền Tây — dữ liệu cũ trong localStorage được seed lại
   seededAt: number;
   offsetMinutes: number;
   seq: Record<string, number>;
@@ -103,7 +105,7 @@ export const peekNight = (db: DB, roomTypeId: number, date: string): Night | und
 
 export function seed(now = Date.now()): DB {
   const db: DB = {
-    version: 2, seededAt: now, offsetMinutes: 0, seq: {},
+    version: 3, seededAt: now, offsetMinutes: 0, seq: {},
     users: [], facilityCategories: [], facilities: [], hotels: [], roomTypes: [], rooms: [], inventory: {}, bookings: [], invoices: [],
     payments: [], payouts: [], reviews: [], notifications: [], audit: [], tokens: [],
     settings: [
@@ -260,6 +262,30 @@ export function seed(now = Date.now()): DB {
   });
   // Khách vãng lai: tra cứu bằng HB-GUEST1 + guest@example.com
   booking(null, nkDeluxe, addDays(today, 3), addDays(today, 4), 1, 2, "CONFIRMED", 2, GUEST_CODE, GUEST_KEY);
+
+  // 200 chỗ nghỉ miền Tây — giống DemoDataSeeder.seedCatalog(): tiện nghi dân dã, chủ cơ sở, khách sạn, loại phòng, phòng (chưa có đơn)
+  const facCats = new Map(db.facilityCategories.map((c) => [c.name, c]));
+  for (const f of catalog.facilities) {
+    const c = facCats.get(f.category) ?? insert<FacilityCategory>(db, "facilityCategories", { name: f.category });
+    facCats.set(f.category, c);
+    fac[f.key] ??= insert<Facility>(db, "facilities", { categoryId: c.id, name: f.name, icon: f.icon }).id;
+  }
+  const owners = new Map(catalog.owners.map((o) => [o.email, user("HOTEL_OWNER", o.fullName, o.email, o.phone)]));
+  for (const row of catalog.hotels) {
+    const h = insert<Hotel>(db, "hotels", {
+      ownerId: owners.get(row.owner)!.id, name: row.name, city: row.city, address: row.address, description: row.description,
+      starRating: row.stars, phone: row.phone, checkInTime: row.checkIn, checkOutTime: row.checkOut, coverImageUrl: row.images[0],
+      images: row.images, status: row.status as HotelStatus, createdAt: now - 45 * DAY, updatedAt: now - 45 * DAY,
+    });
+    for (const rt of row.roomTypes) {
+      const t = insert<RoomType>(db, "roomTypes", {
+        hotelId: h.id, name: rt.name, description: rt.description, capacity: rt.capacity, bedInfo: rt.bedInfo, areaM2: rt.areaM2,
+        basePrice: rt.basePrice, cancellationPolicy: rt.cancellationPolicy as CancellationPolicy, freeCancelDays: rt.freeCancelDays ?? undefined,
+        imageUrl: rt.imageUrl, active: true, facilityIds: rt.facilities.map((k) => fac[k]!), createdAt: now - 45 * DAY,
+      });
+      for (let i = 1; i <= rt.roomCount; i++) insert<Room>(db, "rooms", { roomTypeId: t.id, hotelId: h.id, roomNumber: String(rt.floor * 100 + i), active: true });
+    }
+  }
   return db;
 }
 
@@ -273,7 +299,7 @@ export function load(): DB {
     const raw = window.localStorage.getItem(DB_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as DB;
-      if (parsed?.version === 2) return (memory = parsed);
+      if (parsed?.version === 3) return (memory = parsed);
     }
   } catch {
     /* localStorage bị chặn / dữ liệu hỏng → seed lại */

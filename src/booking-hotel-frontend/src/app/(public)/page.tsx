@@ -20,6 +20,16 @@ const CITY_IMAGES: Record<string, string> = {
   "Phú Quốc": HOTEL_IMAGES.sunsetBay, // Wolfgang Unger
   "Kiên Giang": HOTEL_IMAGES.sunsetBay, // Wolfgang Unger
   "Đồng Tháp": unsplash("photo-1785109825844-92b3cab7a4f8"), // Irish83 — cánh đồng sen
+  // 13 tỉnh của catalog miền Tây (src/seed-catalog) — ảnh đã duyệt theo chủ đề
+  "Bến Tre": unsplash("photo-1603779046675-2eccbab9b982"), // Dang Cong — dừa
+  "Tiền Giang": unsplash("photo-1543411789-1a67a2ac05c6"), // Tomáš Malík — xuồng trên sông
+  "Vĩnh Long": unsplash("photo-1624937195771-358add2e0d9d"), // Trang Trinh — ghe trên sông
+  "An Giang": unsplash("photo-1580630873708-e0475b1856c4"), // diGital Sennin — rừng tràm Trà Sư
+  "Cà Mau": unsplash("photo-1612971432130-04d239cb6706"), // Fuu J — rừng ngập nước
+  "Sóc Trăng": unsplash("photo-1650197404160-8d08f76002c0"), // Mộc Đăng Khoa — chùa Khmer
+  "Bạc Liêu": unsplash("photo-1729568664729-1f2f44e53320"), // Thompson Le — điện gió
+  "Trà Vinh": unsplash("photo-1724013236008-69e9e94dab12"), // Ronin — làng quê
+  "Long An": unsplash("photo-1719560690851-0f39e7bffd31"), // Duong Ngan — hoa sen
 };
 
 export default async function HomePage() {

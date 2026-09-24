@@ -74,6 +74,7 @@ public class DemoDataSeeder implements CommandLineRunner {
     private final TimeProvider time;
 
     private final Map<String, Facility> fac = new HashMap<>();
+    private final Map<String, FacilityCategory> facCats = new HashMap<>();
     private final Map<Long, List<Room>> roomsByType = new HashMap<>();
     private final Map<String, RoomInventory> nights = new HashMap<>();
     private Instant now;
@@ -185,8 +186,40 @@ public class DemoDataSeeder implements CommandLineRunner {
         // Khách vãng lai: tra cứu bằng HB-GUEST1 + guest@example.com
         booking(null, nkDeluxe, today.plusDays(3), today.plusDays(4), 1, 2, BookingStatus.CONFIRMED, 2, GUEST_CODE, GUEST_KEY);
 
+        seedCatalog(MekongCatalog.load(), pw);
         log.info("Đã tạo dữ liệu mẫu: {} tài khoản, {} khách sạn, {} loại phòng, {} phòng, {} đơn, {} đêm tồn kho",
                 users.count(), hotels.count(), roomTypes.count(), rooms.count(), bookings.count(), inventory.count());
+    }
+
+    /**
+     * 200 chỗ nghỉ miền Tây từ catalog JSON (dùng chung với bản demo offline): tiện nghi dân dã bổ sung, chủ cơ sở
+     * (chunhaNN@example.com, mật khẩu 12345678), khách sạn + ảnh + loại phòng + phòng. Không tạo đơn → tồn kho để trống.
+     */
+    void seedCatalog(MekongCatalog catalog, String pw) {
+        for (MekongCatalog.FacilityRow f : catalog.facilities()) {
+            FacilityCategory cat = facCats.computeIfAbsent(f.category(), n -> categories.save(new FacilityCategory(n)));
+            fac.computeIfAbsent(f.key(), k -> facilities.save(new Facility(cat, f.name(), f.icon())));
+        }
+        Map<String, User> owners = new HashMap<>();
+        for (MekongCatalog.OwnerRow o : catalog.owners()) owners.put(o.email(), user("HOTEL_OWNER", o.fullName(), o.email(), o.phone(), pw, null));
+        for (MekongCatalog.HotelRow row : catalog.hotels()) {
+            Hotel h = new Hotel(Objects.requireNonNull(owners.get(row.owner()), row.owner()).getId(), now);
+            h.updateProfile(row.name(), row.city(), row.address(), row.description(), row.stars(), row.phone(), row.checkIn(), row.checkOut(),
+                    row.images().get(0), now);
+            HotelStatus status = HotelStatus.valueOf(row.status());
+            if (status != HotelStatus.PENDING_APPROVAL) h.changeStatus(status, now);
+            h = hotels.save(h);
+            for (int i = 0; i < row.images().size(); i++) images.save(new HotelImage(h.getId(), row.images().get(i), i));
+            for (MekongCatalog.RoomTypeRow rt : row.roomTypes()) {
+                RoomType t = new RoomType(h, now);
+                Set<Facility> fs = new LinkedHashSet<>();
+                for (String k : rt.facilities()) fs.add(Objects.requireNonNull(fac.get(k), k));
+                t.update(rt.name(), rt.description(), rt.capacity(), rt.bedInfo(), rt.areaM2(), rt.basePrice(),
+                        CancellationPolicy.valueOf(rt.cancellationPolicy()), rt.freeCancelDays(), rt.imageUrl(), fs, now);
+                t = roomTypes.save(t);
+                for (int i = 1; i <= rt.roomCount(); i++) rooms.save(new Room(t, String.valueOf(rt.floor() * 100 + i), now));
+            }
+        }
     }
 
     // ---------------------------------------------------------------- helpers
@@ -204,6 +237,7 @@ public class DemoDataSeeder implements CommandLineRunner {
                 {"Tiện ích", new String[][] {{"parking", "Chỗ đậu xe", "car"}, {"elevator", "Thang máy", "arrow-up-down"}}}};
         for (Object[] c : data) {
             FacilityCategory cat = categories.save(new FacilityCategory((String) c[0]));
+            facCats.put(cat.getName(), cat);
             for (String[] f : (String[][]) c[1]) fac.put(f[0], facilities.save(new Facility(cat, f[1], f[2])));
         }
     }
