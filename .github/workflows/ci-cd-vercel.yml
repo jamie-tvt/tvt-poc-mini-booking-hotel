@@ -94,15 +94,18 @@ jobs:
           [ -n "$VERCEL_ORG_ID" ] || missing="$missing vars.VERCEL_ORG_ID"
           [ -n "$VERCEL_PROJECT_ID" ] || missing="$missing vars.VERCEL_PROJECT_ID"
           if [ -n "$missing" ]; then echo "::error::Thiếu cấu hình:$missing (Settings → Secrets and variables → Actions)"; exit 1; fi
+      # Tải artifact ra NGOÀI thư mục git: nếu deploy từ trong repo, Vercel CLI gắn metadata commit và
+      # gói Hobby sẽ chặn (BLOCKED) vì tác giả commit không phải thành viên team Vercel.
       - uses: actions/download-artifact@v4
         with:
           name: offline-demo
-          path: dist
+          path: ${{ runner.temp }}/site
       - run: npm install -g vercel@latest
       - name: Deploy
         id: deploy
+        working-directory: ${{ runner.temp }}
         run: |
-          url=$(vercel deploy dist --prod --yes --token "$VERCEL_TOKEN" --meta release="$TAG")
+          url=$(timeout 10m vercel deploy site --prod --yes --token "$VERCEL_TOKEN" --meta release="$TAG")
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "### 🚀 $TAG deployed: $url" >> "$GITHUB_STEP_SUMMARY"
       - name: GitHub Release
