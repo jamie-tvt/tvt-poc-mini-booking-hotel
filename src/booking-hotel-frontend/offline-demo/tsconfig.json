@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
+    "plugins": [],
+    "noUncheckedIndexedAccess": false,
+    "paths": {
+      "@/*": ["../src/*"],
+      "next/link": ["./shims/link.tsx"],
+      "next/navigation": ["./shims/navigation.ts"],
+      "next/font/google": ["./shims/font.ts"]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx", "../src/**/*.ts", "../src/**/*.tsx"],
+  "exclude": ["dist", "../src/**/tests/**", "../src/app/layout.tsx"]
+}

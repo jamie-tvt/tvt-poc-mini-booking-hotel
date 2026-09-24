@@ -1,0 +1,29 @@
+{
+  "colors": {
+    "primary": "#1E3A8A",
+    "onPrimary": "#FFFFFF",
+    "accent": "#A16207",
+    "onAccent": "#FFFFFF",
+    "bg": "#F8FAFC",
+    "ink": "#1E40AF",
+    "card": "#FFFFFF",
+    "inkSoft": "#475569",
+    "line": "#BFDBFE",
+    "bad": "#DC2626",
+    "primarySoft": "#E4E7F1",
+    "primaryInk": "#193071",
+    "accentSoft": "#F4ECE1",
+    "accentInk": "#845006",
+    "badSoft": "#FBE5E5"
+  },
+  "fonts": {
+    "heading": "Playfair Display",
+    "body": "Be Vietnam Pro",
+    "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap&subset=vietnamese",
+    "_note": "MASTER.md đề xuất Playfair Display SC + Karla nhưng hai font này thiếu dấu tiếng Việt — mentor đổi (decisions D10)"
+  },
+  "_source": {
+    "master": "design-system/booking-hotel/MASTER.md",
+    "brandOverride": false
+  }
+}

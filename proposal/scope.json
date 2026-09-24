@@ -1,0 +1,1983 @@
+{
+ "$schema": "tvt-idea-to-poc/scope",
+ "project": {
+  "name": "Booking Hotel — POC mentor",
+  "title": "Kế hoạch triển khai và POC mẫu của team Mentor",
+  "eyebrow": "H10+ Training · Team B · Booking Hotel",
+  "lead": "Bản mẫu của team mentor; phạm vi suy từ tài liệu FE của Team B, chờ đối chiếu SRS v1.1",
+  "date": "23/09/2026",
+  "year": "2026",
+  "version": "v1",
+  "channelLabel": "Web trước — Next.js + API Spring Boot",
+  "description": "Nền tảng đặt phòng khách sạn nhiều bên: Customer Site, Hotel Portal (chủ và nhân viên khách sạn), Admin Panel, API Spring Boot",
+  "sourceDoc": "Frontend Folder Structure v1.0 (Team B, tham chiếu SRS v1.1 chưa có trên Drive) + Database Design/API doc Team A làm mẫu",
+  "totalWeeks": 12,
+  "validityDays": 30,
+  "startDate": null,
+  "internal": true
+ },
+ "answers": {
+  "source": "Drive 'H10+ Training Project' (SRS/DB/Architecture/API/Mockup Team A; cấu trúc FE Team B) + README repo GitHub 689Cloud-LLC + research",
+  "channel": "Web trước: website khách + cổng quản trị bằng Next.js App Router, API Spring Boot; không có app mobile",
+  "mustHave": "Luồng chính đầu–cuối chạy thật trên Docker: tìm → đặt (chống trùng chỗ) → thanh toán giả lập → vận hành → đánh giá",
+  "mustHaveFixed": true,
+  "split": "Team mentor TVT làm trọn gói POC (PM, BE, FE, QC); intern tự làm bản của mình để so sánh",
+  "clientDoesBAQC": false,
+  "packages": 3,
+  "packagesMeaning": "Mức 1 = POC mentor · Mức 2 = đủ theo SRS intern · Mức 3 = mở rộng (không phải gói báo giá)",
+  "pricing": "Không báo giá — POC nội bộ (project.internal = true); Excel chỉ hiện ngày công để cân đối nguồn lực",
+  "approver": "Mentor lead TVT (user)",
+  "env": "Claude Code trên macOS, có terminal; Docker Desktop cần bật trước khi dựng POC",
+  "timeline": "POC mentor trong 1 tuần (D1–D5); lịch dự án theo tuần tương đối T1..T12 của khoá",
+  "brand": null,
+  "poc": {
+   "wanted": true,
+   "level": "full",
+   "stack": "Java 17 + Spring Boot 3 + Spring Security/JWT + JPA + Flyway + MySQL 8 · Next.js App Router + TypeScript · Docker Compose · Stripe qua adapter (mặc định giả lập)",
+   "channels": [
+    "landing",
+    "customer",
+    "admin"
+   ],
+   "scope": "Toàn bộ chức năng Mức 1",
+   "layout": "Mirror layout repo intern (booking-*-backend / booking-*-frontend / docker)"
+  },
+  "gate1": "Duyệt 23/09/2026 bởi user"
+ },
+ "pricing": {
+  "workdaysPerMonth": 22,
+  "costFactor": 1.35,
+  "effortFactor": 1.0,
+  "toolsCost": 0,
+  "salaries": {
+   "BE": 28,
+   "FE": 25,
+   "AI": 30,
+   "DevOps": 28,
+   "PM": 30,
+   "Design": 22,
+   "Tech Lead": 35
+  },
+  "_note": "Chỉ dùng để quy đổi ngày công nội bộ; không xuất báo giá (project.internal = true)."
+ },
+ "phases": [
+  {
+   "name": "0 · Tài liệu và chốt phạm vi",
+   "weeks": [
+    1,
+    2
+   ]
+  },
+  {
+   "name": "1 · UX/UI và nền tảng kỹ thuật",
+   "weeks": [
+    3,
+    4
+   ]
+  },
+  {
+   "name": "2 · Phát triển",
+   "weeks": [
+    5,
+    10
+   ]
+  },
+  {
+   "name": "3 · Kiểm thử và demo",
+   "weeks": [
+    11,
+    12
+   ]
+  }
+ ],
+ "sprints": [
+  {
+   "id": "S1",
+   "weeks": [
+    5,
+    6
+   ]
+  },
+  {
+   "id": "S2",
+   "weeks": [
+    7,
+    8
+   ]
+  },
+  {
+   "id": "S3",
+   "weeks": [
+    9,
+    10
+   ]
+  }
+ ],
+ "timeline": [
+  {
+   "key": "0 · Tài liệu và chốt phạm vi",
+   "label": "0 · Tài liệu",
+   "weeks": "T1–T2"
+  },
+  {
+   "key": "1 · UX/UI và nền tảng kỹ thuật",
+   "label": "1 · UX/UI + nền kỹ thuật",
+   "weeks": "T3–T4"
+  },
+  {
+   "key": "S1",
+   "label": "S1",
+   "weeks": "T5–T6"
+  },
+  {
+   "key": "S2",
+   "label": "S2",
+   "weeks": "T7–T8"
+  },
+  {
+   "key": "S3",
+   "label": "S3",
+   "weeks": "T9–T10"
+  },
+  {
+   "key": "3 · Kiểm thử và demo",
+   "label": "3 · Kiểm thử và demo",
+   "weeks": "T11–T12"
+  }
+ ],
+ "groups": [
+  {
+   "code": "ACC",
+   "name": "Tài khoản và phân quyền"
+  },
+  {
+   "code": "HTL",
+   "name": "Khách sạn, phòng, tiện nghi"
+  },
+  {
+   "code": "INV",
+   "name": "Tồn kho và giá"
+  },
+  {
+   "code": "SRC",
+   "name": "Tìm và xem phòng"
+  },
+  {
+   "code": "BK",
+   "name": "Đặt phòng"
+  },
+  {
+   "code": "PAY",
+   "name": "Thanh toán, hoá đơn, hoàn tiền"
+  },
+  {
+   "code": "FO",
+   "name": "Lễ tân"
+  },
+  {
+   "code": "REV",
+   "name": "Đánh giá"
+  },
+  {
+   "code": "PO",
+   "name": "Payout cho khách sạn"
+  },
+  {
+   "code": "NTF",
+   "name": "Thông báo"
+  },
+  {
+   "code": "ADM",
+   "name": "Quản trị nền tảng"
+  },
+  {
+   "code": "NỀN",
+   "name": "Nền tảng, chất lượng, vận hành"
+  },
+  {
+   "code": "QUẢN LÝ",
+   "name": "Quản lý dự án"
+  }
+ ],
+ "journeys": [
+  {
+   "no": 1,
+   "title": "Khách tìm phòng",
+   "desc": "Chọn điểm đến, ngày nhận–trả, số khách; lọc; xem chi tiết phòng, giá niêm yết và chính sách huỷ."
+  },
+  {
+   "no": 2,
+   "title": "Đặt phòng và thanh toán",
+   "desc": "Đặt không cần tài khoản; hệ thống giữ tồn kho theo đêm có hạn; thanh toán; nhận mã booking và invoice."
+  },
+  {
+   "no": 3,
+   "title": "Lưu trú",
+   "desc": "Nhân viên khách sạn check-in, gán phòng, check-out hoặc đánh dấu không đến; khách nhận thông báo."
+  },
+  {
+   "no": 4,
+   "title": "Sau lưu trú",
+   "desc": "Khách đánh giá; huỷ và hoàn tiền theo chính sách; khách sạn theo dõi payout."
+  },
+  {
+   "no": 5,
+   "title": "Chủ khách sạn vận hành",
+   "desc": "Đăng ký khách sạn, loại phòng, phòng, tiện nghi, giá, nhân viên, danh sách booking."
+  },
+  {
+   "no": 6,
+   "title": "Quản trị nền tảng",
+   "desc": "Duyệt khách sạn, phí nền tảng, danh mục tiện nghi, người dùng, dashboard, audit, hạ tầng và kiểm thử."
+  }
+ ],
+ "features": [
+  {
+   "id": "DIS-01",
+   "group": "QUẢN LÝ",
+   "featureGroup": "Tài liệu",
+   "name": "Rà tài liệu Team B, xin SRS v1.1 và DB Design; lập gap list",
+   "short": "Rà tài liệu Team B, xin SRS v1.1…",
+   "docRef": "FE structure §Intro (tham chiếu SRS v1.1)",
+   "actor": "Mentor",
+   "platform": "Tài liệu",
+   "package": 1,
+   "phase": "0 · Tài liệu và chốt phạm vi",
+   "sprint": null,
+   "must": false,
+   "type": "ba",
+   "days": 3,
+   "journey": null,
+   "release": "Web + API",
+   "extra": false,
+   "note": "",
+   "hideFromClient": true
+  },
+  {
+   "id": "DIS-02",
+   "group": "QUẢN LÝ",
+   "featureGroup": "Quy trình",
+   "name": "Convention, cấu trúc repo, branch flow, checklist review, DoD",
+   "short": "Convention, cấu trúc repo, branch…",
+   "docRef": "Handover T1 §4",
+   "actor": "Mentor",
+   "platform": "Tài liệu",
+   "package": 1,
+   "phase": "1 · UX/UI và nền tảng kỹ thuật",
+   "sprint": null,
+   "must": false,
+   "type": "ops",
+   "days": 2,
+   "journey": null,
+   "release": "Web + API",
+   "extra": false,
+   "note": "",
+   "hideFromClient": true
+  },
+  {
+   "id": "SYS-01",
+   "group": "NỀN",
+   "featureGroup": "Nền tảng",
+   "name": "Khởi tạo dự án backend, frontend, Docker Compose và migration Flyway đầu tiên",
+   "short": "Khởi tạo dự án backend, frontend,…",
+   "docRef": "Repo booking-hotel-backend (pom.xml)",
+   "actor": "Mentor",
+   "platform": "Hạ tầng",
+   "package": 1,
+   "phase": "1 · UX/UI và nền tảng kỹ thuật",
+   "sprint": null,
+   "must": true,
+   "type": "infra",
+   "days": 5,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "SYS-02",
+   "group": "NỀN",
+   "featureGroup": "Nền tảng",
+   "name": "Khung API chuẩn: ApiResponse, mã lỗi, validation, requestId, Swagger",
+   "short": "Khung API chuẩn: ApiResponse, mã…",
+   "docRef": "Theo API doc Team A",
+   "actor": "Mentor",
+   "platform": "API",
+   "package": 1,
+   "phase": "1 · UX/UI và nền tảng kỹ thuật",
+   "sprint": null,
+   "must": true,
+   "type": "be",
+   "days": 3,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "SYS-03",
+   "group": "NỀN",
+   "featureGroup": "Bảo mật",
+   "name": "Cách ly dữ liệu theo khách sạn: owner và staff chỉ thấy khách sạn của mình",
+   "short": "Cách ly dữ liệu theo khách sạn: o…",
+   "docRef": "NFR-SEC-05",
+   "actor": "Hệ thống",
+   "platform": "API",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": true,
+   "type": "be",
+   "days": 2.5,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "SYS-04",
+   "group": "NỀN",
+   "featureGroup": "Chất lượng",
+   "name": "CI: build, test tự động ba tầng (JUnit + Testcontainers, Vitest, Playwright)",
+   "short": "CI: build, test tự động ba tầng (…",
+   "docRef": "—",
+   "actor": "Mentor",
+   "platform": "Hạ tầng",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": false,
+   "type": "infra",
+   "days": 4,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "SYS-05",
+   "group": "NỀN",
+   "featureGroup": "Vận hành",
+   "name": "Nhật ký kiểm toán (audit log)",
+   "short": "Nhật ký kiểm toán (audit log)",
+   "docRef": "BS",
+   "actor": "Admin",
+   "platform": "API",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "be",
+   "days": 3,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "SYS-06",
+   "group": "NỀN",
+   "featureGroup": "Nền tảng",
+   "name": "Lưu ảnh qua adapter: cục bộ mặc định, Cloudflare R2 khi có khoá",
+   "short": "Lưu ảnh qua adapter: cục bộ mặc đ…",
+   "docRef": "BS",
+   "actor": "Mentor",
+   "platform": "API",
+   "package": 3,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "intg",
+   "days": 3,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "ACC-01",
+   "group": "ACC",
+   "featureGroup": "Xác thực",
+   "name": "Đăng ký, đăng nhập JWT (access + refresh xoay vòng), đăng xuất",
+   "short": "Đăng ký, đăng nhập JWT (access +…",
+   "docRef": "FR-AUTH",
+   "actor": "Khách · Owner · Staff · Admin",
+   "platform": "Web + API",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": true,
+   "type": "full",
+   "days": 4,
+   "journey": 1,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "ACC-02",
+   "group": "ACC",
+   "featureGroup": "Xác thực",
+   "name": "Đăng nhập Google OAuth",
+   "short": "Đăng nhập Google OAuth",
+   "docRef": "FR-AUTH (Google OAuth)",
+   "actor": "Khách",
+   "platform": "Web + API",
+   "package": 3,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "intg",
+   "days": 2.5,
+   "journey": 1,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "ACC-03",
+   "group": "ACC",
+   "featureGroup": "Xác thực",
+   "name": "Quên mật khẩu qua email",
+   "short": "Quên mật khẩu qua email",
+   "docRef": "FR-AUTH (Forgot password)",
+   "actor": "Khách",
+   "platform": "Web",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "full",
+   "days": 2.5,
+   "journey": 1,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "ACC-04",
+   "group": "ACC",
+   "featureGroup": "Hồ sơ",
+   "name": "Hồ sơ cá nhân: xem, sửa, đổi mật khẩu",
+   "short": "Hồ sơ cá nhân: xem, sửa, đổi mật…",
+   "docRef": "BS",
+   "actor": "Khách",
+   "platform": "Web",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "full",
+   "days": 2,
+   "journey": 1,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "ACC-05",
+   "group": "ACC",
+   "featureGroup": "Phân quyền",
+   "name": "Phân quyền: Guest, Customer, Hotel Owner, Hotel Staff, System Admin — chặn ở API và route",
+   "short": "Phân quyền: Guest, Customer, Hote…",
+   "docRef": "FE structure §routes, §layouts",
+   "actor": "Nội bộ",
+   "platform": "API + Web",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": true,
+   "type": "be",
+   "days": 3,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "HTL-01",
+   "group": "HTL",
+   "featureGroup": "Khách sạn",
+   "name": "Chủ khách sạn đăng ký khách sạn: hồ sơ, địa chỉ, mô tả, chính sách",
+   "short": "Chủ khách sạn đăng ký khách sạn:…",
+   "docRef": "FR-HTL; HotelRegisterPage",
+   "actor": "Hotel Owner",
+   "platform": "Hotel Portal",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": true,
+   "type": "full",
+   "days": 4,
+   "journey": 5,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "HTL-02",
+   "group": "HTL",
+   "featureGroup": "Khách sạn",
+   "name": "Admin duyệt hoặc từ chối khách sạn; chỉ khách sạn ACTIVE mới hiện với khách",
+   "short": "Admin duyệt hoặc từ chối khách sạ…",
+   "docRef": "FR-HTL-002; HotelApprovalPage",
+   "actor": "System Admin",
+   "platform": "Admin Panel",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": false,
+   "type": "full",
+   "days": 2,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "HTL-03",
+   "group": "HTL",
+   "featureGroup": "Phòng",
+   "name": "Loại phòng: giá cơ bản, sức chứa, số phòng, chính sách huỷ (free_before_date / non_refundable)",
+   "short": "Loại phòng: giá cơ bản, sức chứa,…",
+   "docRef": "FR-ROOM; BR-CN-01; roomTypeSchema",
+   "actor": "Hotel Owner",
+   "platform": "Hotel Portal",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": true,
+   "type": "full",
+   "days": 3,
+   "journey": 5,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "HTL-04",
+   "group": "HTL",
+   "featureGroup": "Phòng",
+   "name": "Phòng vật lý theo loại phòng, trạng thái phòng",
+   "short": "Phòng vật lý theo loại phòng, trạ…",
+   "docRef": "FR-ROOM",
+   "actor": "Hotel Owner",
+   "platform": "Hotel Portal",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": false,
+   "type": "full",
+   "days": 2,
+   "journey": 5,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "HTL-05",
+   "group": "HTL",
+   "featureGroup": "Phòng",
+   "name": "Tiện nghi theo danh mục (facility category) gắn cho phòng",
+   "short": "Tiện nghi theo danh mục (facility…",
+   "docRef": "FR-ROOM-007",
+   "actor": "Hotel Owner",
+   "platform": "Hotel Portal",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "full",
+   "days": 2.5,
+   "journey": 5,
+   "release": "Web + API",
+   "extra": false,
+   "note": "Tài liệu FE ghi facilities 'from MongoDB' — POC dùng MySQL JSON, ghi decision"
+  },
+  {
+   "id": "HTL-06",
+   "group": "HTL",
+   "featureGroup": "Nhân sự",
+   "name": "Chủ khách sạn tạo và quản lý tài khoản nhân viên",
+   "short": "Chủ khách sạn tạo và quản lý tài…",
+   "docRef": "FR-USR-004, FR-USR-005; StaffManagementPage",
+   "actor": "Hotel Owner",
+   "platform": "Hotel Portal",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "full",
+   "days": 2,
+   "journey": 5,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "HTL-07",
+   "group": "HTL",
+   "featureGroup": "Khách sạn",
+   "name": "Ảnh khách sạn và phòng: tải lên, sắp xếp",
+   "short": "Ảnh khách sạn và phòng: tải lên,…",
+   "docRef": "BS",
+   "actor": "Hotel Owner",
+   "platform": "Hotel Portal",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "full",
+   "days": 2.5,
+   "journey": 5,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "INV-01",
+   "group": "INV",
+   "featureGroup": "Tồn kho",
+   "name": "Tồn kho theo đêm cho từng loại phòng; khoá dòng tồn kho khi đặt để chống trùng phòng",
+   "short": "Tồn kho theo đêm cho từng loại ph…",
+   "docRef": "BS (nguồn sự thật cho tìm kiếm và đặt)",
+   "actor": "Hệ thống",
+   "platform": "API",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": true,
+   "type": "be",
+   "days": 4,
+   "journey": 2,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm",
+   "frs": {
+    "flow": "1. Sinh room_inventory(room_type, date, available) từ số phòng · 2. Tìm kiếm đọc tồn theo khoảng đêm · 3. Đặt: SELECT FOR UPDATE các đêm, trừ available trong transaction · 4. Huỷ/hết hạn: cộng lại",
+    "exceptions": "Bất kỳ đêm nào available = 0 → 409 ROOM_UNAVAILABLE; hai yêu cầu cùng lúc chỉ một thành công",
+    "rules": "Không tính tồn bằng cách đếm booking trong ứng dụng",
+    "acceptance": "Test đồng thời 10 khách đặt phòng cuối cùng cùng đêm → đúng 1 thành công"
+   }
+  },
+  {
+   "id": "INV-02",
+   "group": "INV",
+   "featureGroup": "Giá",
+   "name": "Giá theo ngày, mùa và cuối tuần cho loại phòng",
+   "short": "Giá theo ngày, mùa và cuối tuần c…",
+   "docRef": "BS",
+   "actor": "Hotel Owner",
+   "platform": "Hotel Portal",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "be",
+   "days": 3,
+   "journey": 5,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "INV-03",
+   "group": "INV",
+   "featureGroup": "Giá",
+   "name": "Phí nền tảng và giá niêm yết = giá cơ bản + phí (PriceTag)",
+   "short": "Phí nền tảng và giá niêm yết = gi…",
+   "docRef": "BR-PR-01; FR-FEE; PriceTag",
+   "actor": "System Admin",
+   "platform": "API + Web",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": true,
+   "type": "be",
+   "days": 2,
+   "journey": 1,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "SRC-01",
+   "group": "SRC",
+   "featureGroup": "Tìm kiếm",
+   "name": "Tìm khách sạn/phòng theo địa điểm, ngày nhận–trả, số khách; lọc theo giá, tiện nghi, hạng sao; sắp xếp",
+   "short": "Tìm khách sạn/phòng theo địa điểm…",
+   "docRef": "FR-SRC-001, FR-SRC-002; SearchResultsPage",
+   "actor": "Khách",
+   "platform": "Web",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": true,
+   "type": "full",
+   "days": 4,
+   "journey": 1,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "SRC-02",
+   "group": "SRC",
+   "featureGroup": "Tìm kiếm",
+   "name": "Chi tiết phòng: ảnh, tiện nghi theo danh mục, chính sách huỷ, giá theo đêm đã chọn, còn trống",
+   "short": "Chi tiết phòng: ảnh, tiện nghi th…",
+   "docRef": "FR-SRC-003; RoomDetailPage",
+   "actor": "Khách",
+   "platform": "Web",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S1",
+   "must": true,
+   "type": "fe",
+   "days": 3,
+   "journey": 1,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "SRC-03",
+   "group": "SRC",
+   "featureGroup": "Tìm kiếm",
+   "name": "Trang chủ: điểm đến nổi bật, khách sạn mới duyệt, SEO",
+   "short": "Trang chủ: điểm đến nổi bật, khác…",
+   "docRef": "Home",
+   "actor": "Khách",
+   "platform": "Web",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "fe",
+   "days": 2,
+   "journey": 1,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "BK-01",
+   "group": "BK",
+   "featureGroup": "Đặt phòng",
+   "name": "Đặt phòng không cần tài khoản (guest checkout): thông tin khách, giữ chỗ tạm có hạn, mã booking",
+   "short": "Đặt phòng không cần tài khoản (gu…",
+   "docRef": "FR-BK; BR-BK-01; bookingGuestInfoSchema",
+   "actor": "Khách",
+   "platform": "Web + API",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": true,
+   "type": "full",
+   "days": 5,
+   "journey": 2,
+   "release": "Web + API",
+   "extra": false,
+   "note": "",
+   "frs": {
+    "flow": "1. Nhập tên, email, SĐT, ngày nhận–trả · 2. API khoá tồn kho các đêm, tạo booking PENDING với booking_code và expires_at · 3. Chuyển sang thanh toán · 4. PAID → CONFIRMED, gửi mã booking",
+    "exceptions": "Hết phòng 409; check-out ≤ check-in 400; quá hạn giữ chỗ → EXPIRED và trả tồn",
+    "rules": "bookings.user_id nullable; tra cứu bằng booking_code + email",
+    "acceptance": "Khách vãng lai đặt xong nhận mã, tra cứu được"
+   }
+  },
+  {
+   "id": "BK-02",
+   "group": "BK",
+   "featureGroup": "Đặt phòng",
+   "name": "Máy trạng thái booking: PENDING → CONFIRMED → CHECKED_IN → CHECKED_OUT; nhánh CANCELLED / EXPIRED / NO_SHOW",
+   "short": "Máy trạng thái booking: PENDING →…",
+   "docRef": "BS",
+   "actor": "Hệ thống",
+   "platform": "API",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": true,
+   "type": "be",
+   "days": 2,
+   "journey": 2,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "BK-03",
+   "group": "BK",
+   "featureGroup": "Đặt phòng",
+   "name": "Tự huỷ booking quá hạn giữ chỗ và trả tồn kho (job định kỳ)",
+   "short": "Tự huỷ booking quá hạn giữ chỗ và…",
+   "docRef": "BS",
+   "actor": "Hệ thống",
+   "platform": "API",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": true,
+   "type": "be",
+   "days": 2,
+   "journey": 2,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "BK-04",
+   "group": "BK",
+   "featureGroup": "Đơn của tôi",
+   "name": "Tra cứu theo mã booking (khách vãng lai) và Đơn của tôi (đã đăng nhập)",
+   "short": "Tra cứu theo mã booking (khách vã…",
+   "docRef": "FR-BK-004, FR-BK-005; BookingLookupPage",
+   "actor": "Khách",
+   "platform": "Web",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "fe",
+   "days": 2.5,
+   "journey": 2,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "BK-05",
+   "group": "BK",
+   "featureGroup": "Huỷ",
+   "name": "Khách huỷ theo chính sách loại phòng (miễn phí trước ngày X / không hoàn)",
+   "short": "Khách huỷ theo chính sách loại ph…",
+   "docRef": "BR-CN-01",
+   "actor": "Khách",
+   "platform": "Web + API",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "full",
+   "days": 3,
+   "journey": 4,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "BK-06",
+   "group": "BK",
+   "featureGroup": "Quản lý đơn",
+   "name": "Danh sách và chi tiết booking cho Hotel Portal, lọc theo ngày và trạng thái",
+   "short": "Danh sách và chi tiết booking cho…",
+   "docRef": "FR-BK-006; BookingManagementPage",
+   "actor": "Hotel Staff · Owner",
+   "platform": "Hotel Portal",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "full",
+   "days": 3,
+   "journey": 5,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "PAY-01",
+   "group": "PAY",
+   "featureGroup": "Thanh toán",
+   "name": "Thanh toán qua adapter cổng: cổng giả lập mặc định, Stripe khi có khoá",
+   "short": "Thanh toán qua adapter cổng: cổng…",
+   "docRef": "FR-PAY; paymentApi; Stripe.js",
+   "actor": "Khách",
+   "platform": "Web + API",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": true,
+   "type": "intg",
+   "days": 5,
+   "journey": 2,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "PAY-02",
+   "group": "PAY",
+   "featureGroup": "Thanh toán",
+   "name": "Webhook cổng thanh toán: xác minh chữ ký, chống xử lý trùng theo mã giao dịch",
+   "short": "Webhook cổng thanh toán: xác minh…",
+   "docRef": "BS",
+   "actor": "Hệ thống",
+   "platform": "API",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": true,
+   "type": "intg",
+   "days": 3,
+   "journey": 2,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "PAY-03",
+   "group": "PAY",
+   "featureGroup": "Hoá đơn",
+   "name": "Invoice sinh khi thanh toán thành công; khách và khách sạn xem",
+   "short": "Invoice sinh khi thanh toán thành…",
+   "docRef": "types/invoice.ts",
+   "actor": "Khách · Owner",
+   "platform": "Web",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "full",
+   "days": 2,
+   "journey": 2,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "PAY-04",
+   "group": "PAY",
+   "featureGroup": "Hoàn tiền",
+   "name": "Hoàn tiền khi huỷ hợp lệ; admin xử lý thủ công khi cổng giả lập",
+   "short": "Hoàn tiền khi huỷ hợp lệ; admin x…",
+   "docRef": "BR-CN-01",
+   "actor": "System Admin",
+   "platform": "Admin Panel",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "full",
+   "days": 3,
+   "journey": 4,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "FO-01",
+   "group": "FO",
+   "featureGroup": "Lễ tân",
+   "name": "Check-in: xác nhận khách đến, gán phòng vật lý",
+   "short": "Check-in: xác nhận khách đến, gán…",
+   "docRef": "FR-BK-006",
+   "actor": "Hotel Staff",
+   "platform": "Hotel Portal",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": true,
+   "type": "full",
+   "days": 2,
+   "journey": 3,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "FO-02",
+   "group": "FO",
+   "featureGroup": "Lễ tân",
+   "name": "Check-out và đánh dấu không đến (no-show)",
+   "short": "Check-out và đánh dấu không đến (…",
+   "docRef": "FR-BK-007",
+   "actor": "Hotel Staff",
+   "platform": "Hotel Portal",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": true,
+   "type": "full",
+   "days": 2,
+   "journey": 3,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "REV-01",
+   "group": "REV",
+   "featureGroup": "Đánh giá",
+   "name": "Đánh giá sau check-out: điểm và nhận xét, hiện ở chi tiết khách sạn",
+   "short": "Đánh giá sau check-out: điểm và n…",
+   "docRef": "FR-REV; StarRating",
+   "actor": "Khách",
+   "platform": "Web + API",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "full",
+   "days": 2.5,
+   "journey": 4,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "REV-02",
+   "group": "REV",
+   "featureGroup": "Đánh giá",
+   "name": "Kiểm duyệt đánh giá",
+   "short": "Kiểm duyệt đánh giá",
+   "docRef": "BS",
+   "actor": "System Admin",
+   "platform": "Admin Panel",
+   "package": 3,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "full",
+   "days": 1.5,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "PO-01",
+   "group": "PO",
+   "featureGroup": "Thanh toán cho khách sạn",
+   "name": "Trạng thái payout theo booking cho chủ khách sạn (PENDING / PAID)",
+   "short": "Trạng thái payout theo booking ch…",
+   "docRef": "FR-PO-004; PayoutPage",
+   "actor": "Hotel Owner",
+   "platform": "Hotel Portal",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "full",
+   "days": 3,
+   "journey": 4,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "PO-02",
+   "group": "PO",
+   "featureGroup": "Thanh toán cho khách sạn",
+   "name": "Đối soát payout định kỳ, xuất bảng kê",
+   "short": "Đối soát payout định kỳ, xuất bản…",
+   "docRef": "BS",
+   "actor": "System Admin",
+   "platform": "Admin Panel",
+   "package": 3,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "be",
+   "days": 3,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "NTF-01",
+   "group": "NTF",
+   "featureGroup": "Thông báo",
+   "name": "Email và thông báo trong app: xác nhận đặt, thanh toán, huỷ, nhắc nhận phòng",
+   "short": "Email và thông báo trong app: xác…",
+   "docRef": "BS",
+   "actor": "Hệ thống",
+   "platform": "API",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "intg",
+   "days": 3,
+   "journey": 3,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "ADM-01",
+   "group": "ADM",
+   "featureGroup": "Tài khoản",
+   "name": "Quản lý người dùng: danh sách, khoá/mở, đổi vai trò",
+   "short": "Quản lý người dùng: danh sách, kh…",
+   "docRef": "FR-USR-002; UserManagementPage",
+   "actor": "System Admin",
+   "platform": "Admin Panel",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "full",
+   "days": 3,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "ADM-02",
+   "group": "ADM",
+   "featureGroup": "Cấu hình",
+   "name": "Cấu hình phí nền tảng, hạn giữ chỗ, tham số chung",
+   "short": "Cấu hình phí nền tảng, hạn giữ ch…",
+   "docRef": "FR-FEE; PlatformFeeConfigPage",
+   "actor": "System Admin",
+   "platform": "Admin Panel",
+   "package": 1,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "full",
+   "days": 1.5,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "ADM-03",
+   "group": "ADM",
+   "featureGroup": "Danh mục",
+   "name": "Danh mục tiện nghi (facility categories)",
+   "short": "Danh mục tiện nghi (facility cate…",
+   "docRef": "FR-ROOM-007; FacilityCategoryPage",
+   "actor": "System Admin",
+   "platform": "Admin Panel",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S2",
+   "must": false,
+   "type": "full",
+   "days": 1.5,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "ADM-04",
+   "group": "ADM",
+   "featureGroup": "Báo cáo",
+   "name": "Dashboard nền tảng: khách sạn, booking theo trạng thái, doanh thu, công suất",
+   "short": "Dashboard nền tảng: khách sạn, bo…",
+   "docRef": "BS",
+   "actor": "System Admin · Owner",
+   "platform": "Admin Panel · Hotel Portal",
+   "package": 2,
+   "phase": "2 · Phát triển",
+   "sprint": "S3",
+   "must": false,
+   "type": "full",
+   "days": 3.5,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": true,
+   "note": "Mentor đề xuất thêm"
+  },
+  {
+   "id": "QA-01",
+   "group": "NỀN",
+   "featureGroup": "Chất lượng",
+   "name": "Kiểm thử nghiệm thu luồng chính, sửa lỗi, chụp màn hình và chuẩn bị demo",
+   "short": "Kiểm thử nghiệm thu luồng chính,…",
+   "docRef": "Kế hoạch khoá T11–T12",
+   "actor": "Mentor",
+   "platform": "Toàn hệ thống",
+   "package": 1,
+   "phase": "3 · Kiểm thử và demo",
+   "sprint": null,
+   "must": true,
+   "type": "ops",
+   "days": 5,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  },
+  {
+   "id": "QA-02",
+   "group": "NỀN",
+   "featureGroup": "Tài liệu",
+   "name": "Tài liệu bàn giao: runbook demo, tài khoản mẫu, bảng so sánh mentor – intern",
+   "short": "Tài liệu bàn giao: runbook demo,…",
+   "docRef": "Handover T1 §5",
+   "actor": "Mentor",
+   "platform": "Tài liệu",
+   "package": 1,
+   "phase": "3 · Kiểm thử và demo",
+   "sprint": null,
+   "must": false,
+   "type": "ba",
+   "days": 2,
+   "journey": 6,
+   "release": "Web + API",
+   "extra": false,
+   "note": ""
+  }
+ ],
+ "matrixNotes": {
+  "ACC": {
+   "0 · Tài liệu và chốt phạm vi": [
+    "Chốt 5 vai trò và cách ly theo khách sạn"
+   ],
+   "1 · UX/UI và nền tảng kỹ thuật": [
+    "Màn đăng nhập, đăng ký"
+   ],
+   "3 · Kiểm thử và demo": [
+    "Kiểm thử phân quyền"
+   ]
+  },
+  "HTL": {
+   "0 · Tài liệu và chốt phạm vi": [
+    "Chốt trường hồ sơ khách sạn, loại phòng, chính sách huỷ"
+   ],
+   "1 · UX/UI và nền tảng kỹ thuật": [
+    "Mockup Hotel Portal"
+   ],
+   "3 · Kiểm thử và demo": [
+    "Nhập 3 khách sạn mẫu Cần Thơ"
+   ]
+  },
+  "INV": {
+   "0 · Tài liệu và chốt phạm vi": [
+    "Chốt mô hình tồn kho theo đêm, timeout giữ chỗ"
+   ],
+   "3 · Kiểm thử và demo": [
+    "Kiểm thử đồng thời phòng cuối"
+   ]
+  },
+  "SRC": {
+   "1 · UX/UI và nền tảng kỹ thuật": [
+    "Mockup tìm kiếm, chi tiết phòng"
+   ]
+  },
+  "BK": {
+   "0 · Tài liệu và chốt phạm vi": [
+    "Chốt bảng chuyển trạng thái booking, guest checkout"
+   ],
+   "3 · Kiểm thử và demo": [
+    "Chạy luồng đầu–cuối"
+   ]
+  },
+  "PAY": {
+   "0 · Tài liệu và chốt phạm vi": [
+    "Chốt cổng giả lập ↔ Stripe"
+   ],
+   "3 · Kiểm thử và demo": [
+    "Thử webhook sai chữ ký, gửi trùng"
+   ]
+  },
+  "FO": {
+   "1 · UX/UI và nền tảng kỹ thuật": [
+    "Màn lễ tân"
+   ]
+  },
+  "ADM": {
+   "1 · UX/UI và nền tảng kỹ thuật": [
+    "Mockup Admin Panel"
+   ]
+  },
+  "NỀN": {
+   "1 · UX/UI và nền tảng kỹ thuật": [
+    "Docker, CI, khung API"
+   ],
+   "3 · Kiểm thử và demo": [
+    "Demo cuối khoá"
+   ]
+  },
+  "QUẢN LÝ": {
+   "0 · Tài liệu và chốt phạm vi": [
+    "Xin SRS v1.1 + DB Design Team B, gap list"
+   ],
+   "1 · UX/UI và nền tảng kỹ thuật": [
+    "Convention, branch flow, DoD"
+   ]
+  }
+ },
+ "channels": {
+  "nav": "Kênh",
+  "title": "Hệ thống có những kênh nào",
+  "intro": "Ba mặt tiền theo tài liệu FE của Team B, cùng một API. Mentor dựng ba mặt tiền trong một ứng dụng Next.js chia theo layout để khớp stack Team A và tiết kiệm thời gian.",
+  "items": [
+   {
+    "layer": "Customer Site",
+    "tech": "Next.js — trang công khai",
+    "why": "Tìm phòng, chi tiết, đặt không cần tài khoản, thanh toán, tra cứu mã booking, đánh giá; render phía máy chủ để lên Google",
+    "key": true
+   },
+   {
+    "layer": "Hotel Portal",
+    "tech": "Next.js — /portal",
+    "why": "Chủ khách sạn quản lý khách sạn, loại phòng, phòng, giá, nhân viên, payout; nhân viên xử lý booking, check-in/out",
+    "key": true
+   },
+   {
+    "layer": "Admin Panel",
+    "tech": "Next.js — /admin",
+    "why": "Duyệt khách sạn, phí nền tảng, danh mục tiện nghi, người dùng, dashboard"
+   },
+   {
+    "layer": "API",
+    "tech": "Spring Boot — /api/v1",
+    "why": "Một API cho ba mặt tiền; cách ly dữ liệu theo khách sạn ở tầng service"
+   }
+  ],
+  "callout": "Tài liệu FE của Team B đề xuất React Router + Zustand + Ant Design. POC mentor dùng Next.js để khớp stack chung của khoá; <b>nêu rõ khác biệt này khi so sánh</b>, không coi là intern sai."
+ },
+ "stack": {
+  "intro": "Khớp stack chung của khoá (Spring Boot + Next.js + MySQL), thêm mô hình tồn kho theo đêm — phần khó nhất của bài toán khách sạn.",
+  "items": [
+   {
+    "layer": "Website và cổng quản trị",
+    "tech": "Next.js App Router + TypeScript",
+    "why": "Một mã nguồn cho trang công khai (SEO) và trang quản trị; Server Components mặc định, chỉ dùng client component ở form và bộ lọc — đúng cấu trúc intern đã chọn",
+    "key": true
+   },
+   {
+    "layer": "Máy chủ nghiệp vụ",
+    "tech": "Java 17 + Spring Boot 3",
+    "why": "Kiến trúc 4 lớp presentation → application → domain → infrastructure, mỗi nghiệp vụ một module; quy tắc nghiệp vụ nằm trong entity",
+    "key": true
+   },
+   {
+    "layer": "Bảo mật",
+    "tech": "Spring Security + JWT (access + refresh rotation)",
+    "why": "Phân quyền theo vai trò ở cả API và URL; refresh token lưu DB và xoay vòng mỗi lần dùng"
+   },
+   {
+    "layer": "Cơ sở dữ liệu",
+    "tech": "MySQL 8 + Flyway",
+    "why": "Schema đi qua migration có phiên bản; ràng buộc quan trọng (số chỗ, mã giao dịch duy nhất) đặt ở DB, không chỉ ở code",
+    "key": true
+   },
+   {
+    "layer": "Thanh toán",
+    "tech": "Adapter cổng thanh toán (giả lập → Stripe)",
+    "why": "Demo chạy không cần tài khoản thật; bật Stripe khi có khoá; webhook ký HMAC và chống xử lý trùng"
+   },
+   {
+    "layer": "Đóng gói và chạy",
+    "tech": "Docker Compose",
+    "why": "Một lệnh dựng MySQL, API, web; ai cũng chạy được bản demo giống nhau trên máy mình"
+   },
+   {
+    "layer": "Kiểm thử",
+    "tech": "JUnit + Testcontainers · Vitest · Playwright",
+    "why": "Ba tầng: unit, integration trên MySQL thật (có test đồng thời), E2E luồng chính"
+   },
+   {
+    "layer": "Tài liệu API",
+    "tech": "OpenAPI / Swagger + Postman",
+    "why": "Hợp đồng API là nguồn chuẩn giữa FE và BE, giống bộ tài liệu intern đang làm"
+   },
+   {
+    "layer": "Lưu ảnh",
+    "tech": "Cloudflare R2 (adapter, mặc định lưu cục bộ)",
+    "why": "Mức mở rộng; POC lưu ảnh cục bộ để chạy offline",
+    "later": true
+   }
+  ],
+  "note": "Tiện nghi theo danh mục lưu MySQL (JSON) thay vì MongoDB như tài liệu FE gợi ý — một cơ sở dữ liệu đủ cho POC, ghi decision."
+ },
+ "flow": {
+  "nav": "Luồng",
+  "title": "Luồng đặt phòng đầu–cuối",
+  "intro": "Đây cũng là kịch bản kiểm thử nghiệm thu và kịch bản demo cuối khoá.",
+  "stages": [
+   {
+    "title": "Khách tìm và đặt",
+    "steps": [
+     "Chọn điểm đến, ngày nhận–trả, số khách; hệ thống tính tồn kho theo đêm và giá niêm yết = giá cơ bản + phí nền tảng",
+     "Xem chi tiết phòng, tiện nghi, chính sách huỷ; nhập thông tin khách (không cần tài khoản)",
+     "Hệ thống khoá tồn kho các đêm, tạo booking chờ thanh toán có hạn; thanh toán qua cổng; webhook xác nhận → CONFIRMED, gửi mã booking và invoice"
+    ]
+   },
+   {
+    "title": "Khách sạn đón khách",
+    "steps": [
+     "Nhân viên xem booking trong ngày, check-in và gán phòng",
+     "Check-out hoặc đánh dấu không đến; trạng thái cập nhật cho khách và chủ khách sạn"
+    ]
+   },
+   {
+    "title": "Sau lưu trú",
+    "steps": [
+     "Khách đánh giá; điểm hiện trên trang khách sạn",
+     "Huỷ trước hạn được hoàn theo chính sách; chủ khách sạn theo dõi payout; admin đối soát"
+    ]
+   }
+  ]
+ },
+ "scopeIntro": "Sắp theo hành trình của một lần đặt phòng, từ tìm kiếm đến sau lưu trú và phần vận hành của khách sạn, nền tảng. Mức 1 là phạm vi POC của team mentor.",
+ "scopeLists": [
+  {
+   "title": "Mentor bổ sung so với tài liệu Team B",
+   "note": "Team B mới có tài liệu cấu trúc FE; phần nghiệp vụ suy từ mã FR/BR được tham chiếu",
+   "items": [
+    "<b>Tồn kho theo đêm</b> là nguồn sự thật cho tìm kiếm và đặt; khoá ở DB khi đặt",
+    "<b>Giữ chỗ có hạn và job hết hạn</b>",
+    "<b>State machine booking</b> có CHECKED_IN / CHECKED_OUT / NO_SHOW",
+    "<b>Webhook idempotent</b>, audit log, dashboard"
+   ]
+  },
+  {
+   "title": "Không làm trong POC",
+   "items": [
+    "Stripe thật, Google OAuth, Cloudflare R2 (mức 3)",
+    "Payout đối soát, kiểm duyệt đánh giá (mức 3)",
+    "Kênh OTA, channel manager, đa tiền tệ (ngoài phạm vi)"
+   ]
+  }
+ ],
+ "gantt": {
+  "rows": [
+   {
+    "name": "0. Tài liệu và chốt phạm vi",
+    "owner": "Mentor + Intern",
+    "start": 1,
+    "end": 2,
+    "type": "soft",
+    "note": "Xin SRS v1.1, gap list"
+   },
+   {
+    "name": "1. UX/UI và nền tảng kỹ thuật",
+    "owner": "Mentor",
+    "start": 3,
+    "end": 4,
+    "type": "",
+    "note": "Design system, Docker, khung API"
+   },
+   {
+    "name": "2. Phát triển S1–S3",
+    "owner": "Mentor",
+    "start": 5,
+    "end": 10,
+    "type": "",
+    "note": "Ba sprint hai tuần"
+   },
+   {
+    "name": "POC mentor (sau Tour)",
+    "owner": "Mentor",
+    "start": 3,
+    "end": 3,
+    "type": "prep",
+    "note": "Mức 1, D4–D5 của tuần POC"
+   },
+   {
+    "name": "Intern phát triển bản của mình",
+    "owner": "Intern",
+    "start": 3,
+    "end": 10,
+    "type": "soft",
+    "note": "Weekly checkpoint"
+   },
+   {
+    "name": "3. Kiểm thử và demo cuối khoá",
+    "owner": "Mentor + Intern",
+    "start": 11,
+    "end": 12,
+    "type": "",
+    "note": "So sánh, trình bày"
+   }
+  ],
+  "gates": [
+   2,
+   4,
+   10,
+   12
+  ],
+  "note": "Tuần tương đối T1..T12. POC Hotel làm sau POC Tour trong cùng tuần; nếu không kịp thì hạ xuống bản demo HTML offline.",
+  "callout": ""
+ },
+ "packages": [
+  {
+   "id": 1,
+   "name": "Mức 1",
+   "badge": "Lõi — POC mentor",
+   "weeks": "6",
+   "summary": "Luồng chính chạy được đầu–cuối. Đây là phạm vi POC của team mentor.",
+   "diffTitle": "So với mức 2, chưa có",
+   "diff": [
+    "Huỷ và hoàn tiền, invoice",
+    "Tiện nghi theo danh mục, nhân viên, ảnh",
+    "Giá theo mùa, payout, thông báo",
+    "Dashboard, audit log, quên mật khẩu"
+   ],
+   "recommended": true,
+   "legend": "lõi, POC mentor làm"
+  },
+  {
+   "id": 2,
+   "name": "Mức 2",
+   "badge": "Đủ theo SRS",
+   "weeks": "8",
+   "summary": "Đủ chức năng theo tài liệu của intern.",
+   "diffTitle": "Thêm so với mức 1",
+   "diff": [
+    "Toàn bộ FR/BR được tham chiếu trong tài liệu FE Team B"
+   ],
+   "recommended": false,
+   "legend": "đủ theo SRS intern"
+  },
+  {
+   "id": 3,
+   "name": "Mức 3",
+   "badge": "Mở rộng",
+   "weeks": "10+",
+   "summary": "Phần nâng cao, làm khi còn thời gian.",
+   "diffTitle": "Thêm so với mức 2",
+   "diff": [
+    "Stripe thật, Google OAuth, Cloudflare R2",
+    "Đối soát payout, kiểm duyệt đánh giá"
+   ],
+   "recommended": false,
+   "legend": "mở rộng"
+  }
+ ],
+ "packagesIntro": "",
+ "prep": {
+  "title": "Chuẩn bị và rủi ro",
+  "intro": "Việc cần có trước khi dựng POC và rủi ro riêng của Team B.",
+  "lists": [
+   {
+    "title": "Cần có trước khi dựng POC (D1–D2)",
+    "items": [
+     "<b>Docker Desktop</b> đang chạy trên máy mentor",
+     "Quyền truy cập repo GitHub 689Cloud-LLC cho tài khoản dùng để push (hoặc tạo repo <i>poc-mentor-*</i> riêng)",
+     "Khoá Stripe test (tuỳ chọn) — không có thì demo bằng cổng giả lập",
+     "Tài khoản email gửi (tuỳ chọn) cho thông báo ở mức 2"
+    ]
+   },
+   {
+    "title": "Rủi ro và cách xử lý",
+    "items": [
+     "<b>Thời gian 1 tuần cho 2 dự án full-stack</b> — ưu tiên Tour trước; Hotel chưa kịp thì hạ xuống bản demo HTML offline và báo ngay",
+     "<b>Tài liệu intern còn mâu thuẫn</b> (tên trạng thái, chính sách huỷ, timeout) — mentor chốt trong <i>docs/decisions.md</i>, nêu lại với intern như bài học review",
+     "<b>Chống trùng chỗ</b> — bắt buộc có test đồng thời; không dựa vào kiểm tra ở giao diện",
+     "<b>Java/Maven trên máy</b> — build chính trong Docker (temurin 17) để không lệ thuộc máy cá nhân"
+    ]
+   },
+   {
+    "title": "Riêng Team B",
+    "items": [
+     "<b>SRS v1.1 và Database Design của Team B chưa có trên Drive</b> — cần xin để đối chiếu; hiện phạm vi suy từ tài liệu FE",
+     "Tài liệu FE ghi facilities lưu MongoDB — POC dùng một MySQL, cần chốt với intern",
+     "Team B chọn React Router + AntD, khác Next.js — so sánh theo nguyên tắc (SSR/CSR, tách feature), không theo framework"
+    ]
+   }
+  ],
+  "callout": "Bài toán khách sạn khó hơn tour ở phần <b>tồn kho theo đêm và chống trùng phòng</b> — mentor nên dành phần trình bày cho điểm này."
+ },
+ "excel": {
+  "roadmap": [
+   [
+    "0 · Tài liệu và chốt phạm vi",
+    "T1–T2",
+    "Chốt baseline tài liệu",
+    "Xin SRS v1.1 + DB Design Team B; rà FE structure; lập gap list; chốt tồn kho theo đêm, 5 vai trò, guest checkout",
+    "Gap list + decisions.md",
+    "Mentor"
+   ],
+   [
+    "1 · UX/UI và nền tảng kỹ thuật",
+    "T3–T4",
+    "Design system và khung dự án",
+    "UI UX Pro Max → tokens; skeleton BE/FE; Docker; Flyway V1 (hotels, room_types, rooms, room_inventory, bookings, payments, invoices, payouts, platform_fee_config, facility_categories)",
+    "Repo chạy được",
+    "Mentor"
+   ],
+   [
+    "1 · UX/UI và nền tảng kỹ thuật",
+    "T3",
+    "POC mentor",
+    "Mức 1: auth, khách sạn/phòng, tồn kho, tìm kiếm, guest checkout, thanh toán giả lập, check-in/out, đánh giá, admin cơ bản",
+    "POC chạy trên Docker + screenshot",
+    "Mentor"
+   ],
+   [
+    "2 · Phát triển",
+    "T5–T6 (S1)",
+    "Nền + khách sạn + tìm kiếm",
+    "Auth, RBAC, cách ly tenant, khách sạn, duyệt, loại phòng, phòng, tồn kho, phí, tìm kiếm, chi tiết",
+    "Khách tìm được phòng trống",
+    "Mentor/Intern"
+   ],
+   [
+    "2 · Phát triển",
+    "T7–T8 (S2)",
+    "Đặt và lưu trú",
+    "Guest checkout + state machine + job hết hạn, thanh toán + webhook, tra cứu, booking portal, check-in/out, tài khoản, cấu hình",
+    "Luồng đầu–cuối",
+    "Mentor/Intern"
+   ],
+   [
+    "2 · Phát triển",
+    "T9–T10 (S3)",
+    "Hoàn thiện",
+    "Huỷ/hoàn, invoice, đánh giá, payout, giá theo mùa, thông báo, dashboard, audit",
+    "Đủ Mức 2",
+    "Mentor/Intern"
+   ],
+   [
+    "3 · Kiểm thử và demo",
+    "T11–T12",
+    "Kiểm thử và demo",
+    "E2E, sửa lỗi, runbook, so sánh mentor – intern, trình bày cuối khoá",
+    "Demo + bảng so sánh",
+    "Mentor + Intern"
+   ]
+  ],
+  "integrations": [
+   [
+    "Thanh toán",
+    "Stripe (theo tài liệu intern)",
+    "Adapter: cổng giả lập mặc định, Stripe Checkout + webhook khi có khoá test",
+    "Tài khoản Stripe test, webhook secret",
+    "Mentor",
+    "Mức 1 (giả lập) · Mức 3 (thật)",
+    "Phí theo giao dịch",
+    "Chưa bắt đầu"
+   ],
+   [
+    "Email",
+    "SMTP / Resend / SES",
+    "Adapter gửi mail, mặc định ghi log",
+    "Tài khoản gửi mail",
+    "Mentor",
+    "Mức 2",
+    "Theo số mail",
+    "Chưa bắt đầu"
+   ],
+   [
+    "Lưu ảnh",
+    "Cloudflare R2 (theo tài liệu intern)",
+    "Adapter storage, mặc định lưu cục bộ trong container",
+    "Bucket + khoá R2",
+    "Mentor",
+    "Mức 3",
+    "Theo dung lượng",
+    "Chưa bắt đầu"
+   ],
+   [
+    "Đăng nhập",
+    "Google OAuth",
+    "Adapter OIDC, mức 3",
+    "Google Cloud OAuth client",
+    "Mentor",
+    "Mức 3",
+    "Miễn phí",
+    "Chưa bắt đầu"
+   ]
+  ],
+  "dependencies": [
+   [
+    "PT-01",
+    "Môi trường",
+    "Docker Desktop chạy trên máy dựng POC",
+    "User",
+    "D2",
+    "Toàn bộ Phase 3",
+    "Chưa xong"
+   ],
+   [
+    "PT-02",
+    "Quyền",
+    "Quyền push repo GitHub 689Cloud-LLC hoặc repo poc-mentor riêng",
+    "User",
+    "D3",
+    "Bàn giao mã nguồn",
+    "Chưa xong"
+   ],
+   [
+    "PT-03",
+    "Tài liệu",
+    "Chốt các quyết định về gap trong SRS intern (timeout, chính sách huỷ, enum trạng thái)",
+    "Mentor",
+    "D2",
+    "State machine, job hết hạn",
+    "Chưa xong"
+   ],
+   [
+    "PT-04",
+    "Tài khoản",
+    "Khoá Stripe test (tuỳ chọn)",
+    "User",
+    "Mức 3",
+    "Thanh toán thật",
+    "Chưa cần"
+   ],
+   [
+    "PT-05",
+    "Tài liệu",
+    "SRS v1.1 và Database Design của Team B",
+    "User / Team B",
+    "D1",
+    "Đối chiếu phạm vi Hotel",
+    "Chưa có"
+   ]
+  ],
+  "risks": [
+   [
+    "RR-01",
+    "Hai khách đặt trùng phòng cuối cùng đêm",
+    "BS",
+    "Overbooking",
+    "room_inventory + SELECT FOR UPDATE theo đêm, test đồng thời",
+    "Mentor BE",
+    "Chưa xảy ra"
+   ],
+   [
+    "RR-02",
+    "Booking chờ thanh toán giữ phòng mãi",
+    "BS",
+    "Tồn ảo",
+    "expires_at + job trả tồn",
+    "Mentor BE",
+    "Chưa xảy ra"
+   ],
+   [
+    "RR-03",
+    "Owner/staff thấy dữ liệu khách sạn khác",
+    "NFR-SEC-05",
+    "Rò rỉ dữ liệu",
+    "Guard tenant ở service, test phân quyền",
+    "Mentor BE",
+    "Chưa xảy ra"
+   ],
+   [
+    "RR-04",
+    "Không có SRS v1.1 Team B",
+    "Gap",
+    "Phạm vi lệch với intern",
+    "Ghi rõ 'suy từ tài liệu FE', xin tài liệu ở D1",
+    "Mentor",
+    "Đang xử lý"
+   ],
+   [
+    "RR-05",
+    "Không đủ thời gian sau Tour",
+    "Kế hoạch",
+    "Hotel không kịp full",
+    "Hạ xuống HTML offline (poc-starter) và báo user",
+    "Mentor",
+    "Theo dõi"
+   ]
+  ],
+  "acceptance": [
+   [
+    "Khách vãng lai tìm phòng Cần Thơ 2 đêm, đặt, thanh toán giả lập, nhận mã và tra cứu được",
+    "FR-SRC, FR-BK, FR-PAY",
+    "SRC-01..02, INV-01, BK-01..04, PAY-01..02",
+    "S2",
+    "E2E Playwright trên Docker",
+    "Mentor QC",
+    "",
+    ""
+   ],
+   [
+    "10 yêu cầu đồng thời cho phòng cuối cùng đêm → đúng 1 thành công",
+    "BS",
+    "INV-01, BK-01",
+    "S2",
+    "Integration test Testcontainers",
+    "Mentor QC",
+    "",
+    ""
+   ],
+   [
+    "Booking PENDING quá hạn tự EXPIRED, tồn kho trả lại",
+    "BS",
+    "BK-03",
+    "S2",
+    "Time travel DEMO_TOOLS",
+    "Mentor QC",
+    "",
+    ""
+   ],
+   [
+    "Staff check-in rồi check-out; khách đánh giá được sau CHECKED_OUT, trước đó bị chặn",
+    "FR-BK-006/007, FR-REV",
+    "FO-01..02, REV-01",
+    "S3",
+    "E2E",
+    "Mentor QC",
+    "",
+    ""
+   ],
+   [
+    "Owner A không xem được booking của khách sạn B",
+    "NFR-SEC-05",
+    "SYS-03, ACC-05",
+    "S1",
+    "Integration test",
+    "Mentor QC",
+    "",
+    ""
+   ],
+   [
+    "Admin duyệt khách sạn mới → hiện trong tìm kiếm; giá niêm yết = cơ bản + phí",
+    "FR-HTL-002, BR-PR-01",
+    "HTL-02, INV-03",
+    "S1",
+    "E2E",
+    "Mentor QC",
+    "",
+    ""
+   ]
+  ],
+  "decisions": [
+   [
+    "D1",
+    "Đã chốt",
+    "Mức POC và stack",
+    "Full-stack khớp stack intern: Spring Boot 3 + Next.js + MySQL 8 + Docker; Stripe qua adapter giả lập",
+    "User",
+    "23/09/2026",
+    "Đã chốt",
+    ""
+   ],
+   [
+    "D2",
+    "Đã chốt",
+    "Không báo giá",
+    "POC nội bộ: Artifact không có gói/giá; Excel chỉ ngày công nội bộ",
+    "User",
+    "23/09/2026",
+    "Đã chốt",
+    ""
+   ],
+   [
+    "D3",
+    "Đã chốt",
+    "Mốc",
+    "POC mentor trong 1 tuần; Tour trước, Hotel sau; Hotel chưa kịp thì hạ xuống demo HTML offline",
+    "User",
+    "23/09/2026",
+    "Đã chốt",
+    ""
+   ],
+   [
+    "D4",
+    "Đã chốt",
+    "Người duyệt",
+    "Mentor lead TVT (user) duyệt Cổng 1, GATE 1, GATE 2",
+    "User",
+    "23/09/2026",
+    "Đã chốt",
+    ""
+   ],
+   [
+    "D5",
+    "Đã chốt",
+    "Enum trạng thái",
+    "UPPER_SNAKE_CASE thống nhất: Booking PENDING/CONFIRMED/COMPLETED/CANCELLED/EXPIRED; Payment PENDING/PAID/FAILED/REFUNDED/CANCELLED",
+    "Mentor",
+    "23/09/2026",
+    "Đã chốt",
+    "SRS intern dùng nhiều cách viết khác nhau · User duyệt mặc định 23/09/2026 ('code đi')"
+   ],
+   [
+    "D6",
+    "Đã chốt",
+    "Hạn thanh toán",
+    "15 phút kể từ khi tạo booking (system_settings), job 1 phút/lần huỷ và nhả chỗ",
+    "Mentor",
+    "23/09/2026",
+    "Đã chốt",
+    "SRS chỉ ghi 'thời gian quy định' · User duyệt mặc định 23/09/2026 ('code đi')"
+   ],
+   [
+    "D7",
+    "Đã chốt",
+    "Tồn kho",
+    "room_inventory theo (room_type, date); không dùng MongoDB cho tiện nghi, lưu JSON trong MySQL",
+    "Mentor",
+    "23/09/2026",
+    "Đã chốt",
+    "Tài liệu FE ghi facilities from MongoDB · User duyệt mặc định 23/09/2026 ('code đi')"
+   ],
+   [
+    "D8",
+    "Đã chốt",
+    "Hạn giữ chỗ",
+    "15 phút; NO_SHOW đánh dấu sau 00:00 ngày nhận phòng + 1",
+    "Mentor",
+    "23/09/2026",
+    "Đã chốt",
+    "User duyệt mặc định 23/09/2026 ('code đi')"
+   ],
+   [
+    "D9",
+    "Đã chốt",
+    "Frontend",
+    "Ba mặt tiền trong một ứng dụng Next.js chia theo layout (khớp stack chung), khác đề xuất React Router của Team B",
+    "Mentor",
+    "23/09/2026",
+    "Đã chốt",
+    "Nêu rõ khi so sánh · User duyệt mặc định 23/09/2026 ('code đi')"
+   ]
+  ],
+  "changelog": [
+   [
+    "C1",
+    "Toàn file",
+    "—",
+    "Bản đầu tiên v1 ngày 23/09/2026 sau khi đọc tài liệu intern và repo",
+    "Khởi tạo"
+   ],
+   [
+    "C2",
+    "Quyết định",
+    "D5–D9 ở trạng thái đề xuất",
+    "Chốt theo đề xuất mặc định của mentor",
+    "User duyệt Cổng 1 ngày 23/09/2026"
+   ]
+  ],
+  "extras": [
+   [
+    "Bật Stripe thật (Checkout + webhook)",
+    "",
+    "3",
+    "",
+    "3",
+    ""
+   ],
+   [
+    "Google OAuth",
+    "",
+    "2.5",
+    "",
+    "3",
+    ""
+   ],
+   [
+    "Ảnh lên Cloudflare R2",
+    "",
+    "3",
+    "",
+    "3",
+    ""
+   ],
+   [
+    "Email giao dịch",
+    "",
+    "2.5",
+    "",
+    "2",
+    ""
+   ]
+  ]
+ }
+}

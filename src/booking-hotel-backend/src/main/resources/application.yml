@@ -1,0 +1,60 @@
+server:
+  port: 8080
+  shutdown: graceful
+spring:
+  application:
+    name: booking-hotel-backend
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3308/booking_hotel?useUnicode=true&characterEncoding=utf8&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true}
+    username: ${DB_USERNAME:booking}
+    password: ${DB_PASSWORD:booking}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:20}
+      # READ COMMITTED: đọc thường sau khi đã khoá luôn thấy dữ liệu mới nhất; khoá range không kèm gap lock
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc.time_zone: UTC
+        format_sql: false
+  flyway:
+    enabled: true
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /docs
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+app:
+  jwt:
+    secret: ${JWT_SECRET:dev-only-secret-change-me-dev-only-secret-change-me-0123456789}
+    access-ttl-minutes: ${JWT_ACCESS_TTL_MINUTES:15}
+    refresh-ttl-days: ${JWT_REFRESH_TTL_DAYS:7}
+  frontend-url: ${FRONTEND_URL:http://localhost:3100}
+  cors-origins: ${CORS_ORIGINS:http://localhost:3100}
+  demo-tools: ${DEMO_TOOLS:true}
+  seed-demo: ${SEED_DEMO:true}
+  payment:
+    provider: ${PAYMENT_PROVIDER:mock}
+    mock-secret: ${MOCK_GATEWAY_SECRET:dev-mock-gateway-secret}
+    stripe-secret-key: ${STRIPE_SECRET_KEY:}
+    stripe-webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+  jobs:
+    expiry-interval-ms: ${EXPIRY_INTERVAL_MS:30000}
+logging:
+  level:
+    com.hotelbooking: INFO
+  pattern:
+    level: "%5p [%X{requestId:-}]"

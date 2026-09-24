@@ -1,0 +1,66 @@
+# POC Booking Hotel — chạy song song được với POC Tour (cổng khác: web 3100, API 8180, MySQL 3308)
+name: booking-hotel-poc
+
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: booking_hotel
+      MYSQL_USER: ${DB_USERNAME:-booking}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Đặt DB_PASSWORD trong .env}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Đặt DB_ROOT_PASSWORD trong .env}
+      TZ: UTC
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    ports: ["3308:3306"]
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
+      interval: 5s
+      retries: 30
+
+  backend:
+    build:
+      context: ./booking-hotel-backend
+      dockerfile: ../docker/backend/Dockerfile
+    image: booking-hotel-backend:poc
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/booking_hotel?useUnicode=true&characterEncoding=utf8&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true
+      DB_USERNAME: ${DB_USERNAME:-booking}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?Đặt JWT_SECRET (>= 32 ký tự) trong .env}
+      MOCK_GATEWAY_SECRET: ${MOCK_GATEWAY_SECRET:?Đặt MOCK_GATEWAY_SECRET trong .env}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-mock}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3100}
+      CORS_ORIGINS: ${FRONTEND_URL:-http://localhost:3100}
+      DEMO_TOOLS: ${DEMO_TOOLS:-true}
+      SEED_DEMO: ${SEED_DEMO:-true}
+      TZ: UTC
+    ports: ["8180:8080"]
+    depends_on:
+      mysql: { condition: service_healthy }
+
+  frontend:
+    build:
+      context: ./booking-hotel-frontend
+      dockerfile: ../docker/frontend/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8180/api/v1}
+    image: booking-hotel-frontend:poc
+    environment:
+      API_INTERNAL_URL: http://backend:8080/api/v1
+    ports: ["3100:3000"]
+    depends_on:
+      backend: { condition: service_healthy }
+
+  adminer:
+    image: adminer:4
+    profiles: ["tools"]
+    ports: ["8181:8080"]
+    depends_on: [mysql]
+
+volumes:
+  mysqldata:

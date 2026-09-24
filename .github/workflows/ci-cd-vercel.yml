@@ -1,0 +1,93 @@
+# CI/CD: kiểm tra frontend + backend, rồi deploy bản demo (giao diện Next.js + API giả lập trong trình duyệt) lên Vercel.
+# - push main  → Production   · pull request → Preview
+# - Vercel không chạy được Spring Boot + MySQL, nên deploy bản "offline-demo" (npm run build:offline) — static, không cần backend.
+# Cần cấu hình trên GitHub repo:
+#   secrets.VERCEL_TOKEN      — token tạo ở https://vercel.com/account/tokens (scope: team TVT POC)
+#   vars.VERCEL_ORG_ID        — team_27eoePqTO0RGEFGCGJM8SOvC
+#   vars.VERCEL_PROJECT_ID    — prj_Wj03Wa8T08DCPNGMzQ5geoLV3XKw
+name: CI/CD — Vercel
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Frontend — typecheck · test · build demo
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/booking-hotel-frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/booking-hotel-frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: Build offline demo
+        run: npm run build:offline
+      - uses: actions/upload-artifact@v4
+        with:
+          name: offline-demo
+          path: src/booking-hotel-frontend/offline-demo/dist
+          retention-days: 7
+
+  backend:
+    name: Backend — mvn verify (JUnit + Testcontainers)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/booking-hotel-backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+      - run: ./mvnw -B -ntp verify
+
+  deploy:
+    name: Deploy → Vercel (${{ github.event_name == 'pull_request' && 'Preview' || 'Production' }})
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: Check config
+        run: |
+          missing=""
+          [ -n "$VERCEL_TOKEN" ] || missing="$missing secrets.VERCEL_TOKEN"
+          [ -n "$VERCEL_ORG_ID" ] || missing="$missing vars.VERCEL_ORG_ID"
+          [ -n "$VERCEL_PROJECT_ID" ] || missing="$missing vars.VERCEL_PROJECT_ID"
+          if [ -n "$missing" ]; then echo "::error::Thiếu cấu hình:$missing (Settings → Secrets and variables → Actions)"; exit 1; fi
+      - uses: actions/download-artifact@v4
+        with:
+          name: offline-demo
+          path: dist
+      - run: npm install -g vercel@latest
+      - name: Deploy
+        id: deploy
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then target=""; else target="--prod"; fi
+          url=$(vercel deploy dist $target --yes --token "$VERCEL_TOKEN")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "### 🚀 Deployed: $url" >> "$GITHUB_STEP_SUMMARY"
